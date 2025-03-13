@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Carbon Emission Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            opacity: 0; /* Start with the body hidden */
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ffffff, #b5e6f4);
+            background-size: 400% 400%;
+            animation: gradient 1s ease infinite;
+            transition: background 0.5s ease;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body.loaded {
+            opacity: 1; /* Fade in effect */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center; /* Center the forms horizontally */
+            align-items: flex-start; /* Align items at the start vertically */
+            gap: 20px; /* Space between the forms */
+            margin: 0 auto; /* Center the container */
+        }
+
+        .form-container {
+            width: 450px; /* Increased width for the forms */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: white; /* White background for the forms */
+        }
+        #map {
+            border-radius: 10px;
+            height: 600px;
+            width: 80%; /* Adjust width as needed */
+            max-width: 800px; /* Optional: set a max width */
+        }
+        .layer-options {
+            margin: 10px;
+        }
+        .coordinates {
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px; /* Space below the main heading */
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block; /* Make labels block elements */
+            margin: 10px 0 5px; /* Add margin for spacing */
+        }
+
+        input, select {
+            width: 100%; /* Full width for inputs and selects */
+            padding: 8px; /* Padding inside inputs and selects */
+            margin-bottom: 10px; /* Space below each input/select */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%; /* Full width for the button */
+            padding: 10px;
+            background-color: #28a745; /* Green background */
+            color: white; /* White text */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        .result {
+            margin-top: 20px; /* Space above the result */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #e9ecef; /* Light gray background for results */
+        }
+        .chart-container {
+            margin-top: 40px; /* Space above the chart container */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white; /* White background for the chart container */
+}
+
+#myChart {
+    width: 100%;
+    height: 400px; /* Set height for the chart */
+}
+    </style>
+</head>
+<body>
+    <h1>Material Comparison</h1>
+   
+    <div id="map"></div>
+    <div class="layer-options">
+        <label for="layerSelect">Choose a map layer:</label>
+        <select id="layerSelect">
+            <option value="streets">Streets</option>
+            <option value="satellite">Satellite</option>
+            <option value="terrain">Terrain</option>
+        </select>
+    </div>
+    <div class="coordinates" id="coordinates">Click on the map to place a beacon!</div>
+    <div class="container">
+        <div class="form-container">
+            <h2>D&L Method</h2>
+            <form id="dlForm">
+                <label for="materialTypeDL">Type of Material:</label>
+                <select id="materialTypeDL" required>
+                    <option value="Concrete">Concrete</option>
+                    <option value="HDPE">HDPE Pipe</option>
+                </select>
+
+                <label for="nominalDiameterDL">Nominal Diameter:</label>
+                <select id="nominalDiameterDL" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+
+                <label for="lengthDL">Length of the Pipe (m):</label>
+                <input type="number" id="lengthDL" required>
+
+                <label for="depthDL">Depth of the Pipe (mm):</label>
+                <input type="number" id="depthDL" required>
+
+                <button type="submit">Calculate Emissions</button>
+            </form>
+            <div id="resultDL" class="result"></div>
+        </div>
+
+        <div class="form-container">
+            <h2>CIPP</h2>
+            <form id="cippForm">
+                <label for="materialTypeCIPP">Type of Material:</label>
+                <select id="materialTypeCIPP" disabled>
+                    <option value="Concrete">Concrete</option>
+                </select>
+
+                    <label for="nominalDiameterCIPP">Nominal Diameter:</label>
+                    <select id="nominalDiameterCIPP" required>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+    
+                    <label for="liningMaterialCIPP">CIPP Lining Material:</label>
+                    <select id="liningMaterialCIPP" required>
+                        <option value="Generic - Needle Felt + PE Resin">Generic - Needle Felt + PE Resin</option>
+                        <option value="Generic - Fiberglass + PE Resin">Generic - Fiberglass + PE Resin</option>
+                    </select>
+    
+                    <label for="curingMethodCIPP">Curing Method:</label>
+                    <select id="curingMethodCIPP" required>
+                        <option value="UV">UV</option>
+                        <option value="Steamed">Steamed</option>
+                        <option value="Hot Water Cured">Hot Water Cured</option>
+                    </select>
+    
+                    <button type="submit">Calculate Emissions</button>
+                </form>
+                <div id="resultCIPP" class="result"></div>
+            </div>
+
+    
+        <script src="script.js"></script>
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script>
+            // Add a class to the body when the page is fully loaded
+            window.addEventListener('load', function() {
+                document.body.classList.add('loaded');
+            });
+            // Initialize the map
+            const map = L.map('map').setView([-36.8485, 174.7633], 13); // Auckland coordinates
+
+// Define the base layers
+const layers = {
+    streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }),
+    satellite: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: '© OpenTopoMap'
+    }),
+    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: '© OpenTopoMap'
+    })
+};
+
+// Add the default layer
+layers.streets.addTo(map);
+
+// Change layer based on selection
+document.getElementById('layerSelect').addEventListener('change', function() {
+    const selectedLayer = this.value;
+    map.eachLayer(function(layer) {
+        map.removeLayer(layer);
+    });
+    layers[selectedLayer].addTo(map);
+});
+
+// Add click event to place a beacon
+map.on('click', function(e) {
+    // Get the clicked location
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    // Place a marker (beacon) at the clicked location
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(`Beacon placed at: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+        .openPopup();
+
+    // Display the coordinates below the map
+    document.getElementById('coordinates').innerText = `Beacon placed at: Latitude: ${lat.toFixed(5)}, Longitude: ${lng.toFixed(5)}`;
+});
+
+document.addEventListener('mousemove', function(e) {
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+    document.body.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #ffffff, #b5e6f4)`;
+});
+
+
+        </script>
+    </body>
+    </html>

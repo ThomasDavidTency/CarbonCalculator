@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Calculator - Input Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        .form-container {
+            background: #488197; /* Dark green background */
+            padding: 60px; /* Increased padding */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 2400px; /* Increased max-width */
+            margin: 20px auto;
+            color: #FFD600; /* Yellow text color for the form */
+        }
+
+        h2 {
+            text-align: center;
+            color: #FFD600; /* Yellow text color for the heading */
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            color: #FFD600; /* Yellow text color for labels */
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: #FFD600; /* Yellow text color for input fields */
+            background-color: #2E7D32; /* Match input background with form */
+            transition: transform 0.3s ease; /* Animation for scroll effect */
+        }
+
+        input[type="number"]::placeholder, input[type="text"]::placeholder {
+            color: #FFD600; /* Yellow placeholder text */
+        }
+
+        .map {
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Styles for the output section */
+        .output-container {
+            display: none; /* Initially hidden */
+            background: rgba(255, 255, 255, 0.95); /* Slightly darker background */
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 800px; /* Increased max-width */
+            margin: 20px auto;
+            animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
+            border: 2px solid #4CAF50; /* Add a border for contrast */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .output-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333; /* Dark text color for the output title */
+        }
+
+        .output-item {
+            margin: 5px 0;
+            font-size: 1.2em;
+            color: #444; /* Darker text color for better contrast */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container, .output-container {
+                width: 90%; /* Use a percentage for smaller screens */
+                padding: 30px; /* Reduce padding */
+            }
+
+            h2 {
+                font-size: 1.5em; /* Adjust heading size */
+            }
+
+            .submit-button {
+                padding: 10px; /* Adjust button padding */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Carbon Calculator Input Form</h2>
+        <form id="carbon-calculator-form">
+            
+
+            <label for="location">Select Location on the Map:</label>
+            <div id="map" class="map"></div>
+            <label for="map-layer">Select Map Layer:</label>
+            <select id="map-layer" name="map-layer">
+                <option value="osm" selected>OpenStreetMap</option>
+                <option value="satellite">Satellite</option>
+                <option value="terrain">Terrain</option>
+            </select>
+            <input type="hidden" id="location" name="location" required>
+
+            <label for="length">Length of the Pipeline (in meters):</label>
+            <input type="number" id="length" name="length" required placeholder="Enter length">
+
+            <label for="depth">Depth of Laying of Pipe (in meters):</label>
+            <input type="number" id="depth" name="depth" required placeholder="Enter depth">
+            <label for="object">Select Object:</label>
+            <select id="object" name="object" required>
+                <option value="" disabled selected>Select an Object</option>
+                <option value="Object 1">Object 1</option>
+                <option value="Object 2">Object 2</option>
+                <option value="Object 3">Object 3</option>
+                <option value="Object 4">Object 4</option>
+                <option value="Object 5">Object 5</option>
+                <option value="Object 6">Object 6</option>
+                <option value="Object 7">Object 7</option>
+                <option value="Object 8">Object 8</option>
+                <option value="Object 9">Object 9</option>
+                <option value="Object 10">Object 10</option>
+            </select>
+
+            <button type="submit" class="submit-button">Calculate Carbon Footprint</button>
+        </form>
+    </div>
+    <!-- Output Section -->
+    <div class="output-container" id="output-container">
+        <div class="output-title">Calculation Results:</div>
+        <div class="output-item">
+            <div class="output-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="yellow" viewBox="0 0 24 24">
+                    <path d="M12 2C10.34 2 9 3.34 9 5c0 1.66 3 7 3 7s3-5.34 3-7c0-1.66-1.34-3-3-3zm0 20c-4.41 0-8-3.59-8-8h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.41-3.59 8-8 8z"/>
+                </svg>
+            </div>
+            <div id="output-location"></div>
+        </div>
+        <div class="output-item">
+            <div class="output-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="yellow" viewBox="0 0 24 24">
+                    <path d="M12 2C10.34 2 9 3.34 9 5c0 1.66 3 7 3 7s3-5.34 3-7c0-1.66-1.34-3-3-3zm0 20c-4.41 0-8-3.59-8-8h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.41-3.59 8-8 8z"/>
+                </svg>
+            </div>
+            <div id="output-length"></div>
+        </div>
+        <div class="output-item">
+            <div class="output-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="yellow" viewBox="0 0 24 24">
+                    <path d="M12 2C10.34 2 9 3.34 9 5c0 1.66 3 7 3 7s3-5.34 3-7c0-1.66-1.34-3-3-3zm0 20c-4.41 0-8-3.59-8-8h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.41-3.59 8-8 8z"/>
+                </svg>
+            </div>
+            <div id="output-depth"></div>
+        </div>
+        <div class="output-item">
+            <div class="output-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="yellow" viewBox="0 0 24 24">
+                    <path d="M12 2C10.34 2 9 3.34 9 5c0 1.66 3 7 3 7s3-5.34 3-7c0-1.66-1.34-3-3-3zm0 20c-4.41 0-8-3.59-8-8h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.41-3.59 8-8 8z"/>
+                </svg>
+            </div>
+            <div id="output-carbon-footprint"></div>
+        </div>
+    </div>
+
+    <script>
+        
+    // Initialize the map
+    const map = L.map('map').setView([-36.8485, 174.7633], 13); // Set initial view to Auckland
+
+    // Define the tile layers
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    });
+
+    const satelliteLayer = L.tileLayer('https://{s}.google.com/earth/{z}/{x}/{y}.jpg', {
+        maxZoom: 20,
+        attribution: '© Google'
+    });
+
+    const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: '© OpenTopoMap contributors'
+    });
+
+    // Add the default layer (OpenStreetMap)
+    osmLayer.addTo(map);
+
+    // Add a marker on click
+    let marker;
+    map.on('click', function(e) {
+        if (marker) {
+            map.removeLayer(marker); // Remove existing marker
+        }
+        marker = L.marker(e.latlng).addTo(map); // Add new marker
+        document.getElementById('location').value = e.latlng.lat + ',' + e.latlng.lng; // Store coordinates
+    });
+
+    // Handle layer change
+    document.getElementById('map-layer').addEventListener('change', function() {
+        const selectedLayer = this.value;
+
+        // Remove all layers
+        map.eachLayer(function(layer) {
+            map.removeLayer(layer);
+        });
+
+        // Add the selected layer
+        if (selectedLayer === 'osm') {
+            osmLayer.addTo(map);
+        } else if (selectedLayer === 'satellite') {
+            satelliteLayer.addTo(map);
+        } else if (selectedLayer === 'terrain') {
+            terrainLayer.addTo(map);
+        }
+
+        // Re-add the marker if it exists
+        if (marker) {
+            marker.addTo(map);
+        }
+    });
+
+        // Handle form submission
+        document.getElementById('carbon-calculator-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get input values
+            const length = parseFloat(document.getElementById('length').value);
+            const depth = parseFloat(document.getElementById('depth').value);
+            const location = document.getElementById('location').value;
+            const object = document.getElementById('object').value;
+
+            // Simple carbon footprint calculation (for demonstration purposes)
+            const carbonFootprint = (length * 0.5) + (depth * 0.3); // Example calculation
+
+            // Display results
+            document.getElementById('output-location').innerText = `Location: ${location}`;
+            document.getElementById('output-length').innerText = `Length of Pipeline: ${length} meters`;
+            document.getElementById('output-depth').innerText = `Depth of Laying: ${depth} meters`;
+            document.getElementById('output-carbon-footprint').innerText = `Estimated Carbon Footprint: ${carbonFootprint.toFixed(2)} kg CO2`;
+
+            // Show the output container
+            const outputContainer = document.getElementById('output-container');
+            outputContainer.style.display = 'block'; // Show the output section
+        });
+    </script>
+</body>
+</html>

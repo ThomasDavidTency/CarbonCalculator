@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #e0f6ff, #85d9ec);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    overflow: hidden; /* Prevent scrolling during animation */
+}
+
+.welcome-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-50px);
+    opacity: 0;
+    animation: slideIn 1s forwards; /* Slide in animation */
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    opacity: 0; /* Start hidden for fade-in */
+    transition: opacity 0.5s ease-in-out;
+}
+
+p {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+    opacity: 0; /* Start hidden for fade-in */
+    transition: opacity 0.5s ease-in-out;
+}
+
+.start-button {
+    background-color: #a4dbfd;
+    color: #333;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: background-color 0.3s;
+    display: inline-block;
+    animation: bounce 1s infinite; /* Bounce animation */
+}
+
+.start-button:hover {
+    background-color: #ffffff;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.fade-in {
+    opacity: 0; /* Start hidden */
+}
+
+.fade-in.visible {
+    opacity: 1; /* Fade in */
+}
+
+.form-container {
+    background: #2E7D32; /* Dark green background */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    margin: 20px auto;
+    color: #FFD600; /* Yellow text color for the form */
+}
+
+input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #FFD600; /* Yellow text color for input fields */
+    background-color: #2E7D32; /* Match input background with form */
+}
+
+input[type="number"]::placeholder, input[type="text"]::placeholder {
+    color: #FFD600; /* Yellow placeholder text */
+}

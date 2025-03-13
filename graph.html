@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bar Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Material Data Comparison</h1>
+        <label for="keypoint">Select Keypoint:</label>
+        <select id="keypoint">
+            <option value="200">200</option>
+            <option value="250">250</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+            <option value="1000">1000</option>
+            <option value="1200">1200</option>
+        </select>
+
+        <button id="generate">Generate Graph</button>
+
+        <canvas id="barChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        const fiberglassData = {
+            "200": 3.11,
+            "250": 3.78,
+            "300": 4.44,
+            "400": 6.00,
+            "500": 7.78,
+            "600": 10.22,
+            "700": 13.78,
+            "800": 19.78,
+            "900": 24.89,
+            "1000": 30.22,
+            "1200": 45.56
+        };
+
+        const needleFeltData = {
+            "200": 2.67,
+            "250": 3.33,
+            "300": 4.89,
+            "400": 8.44,
+            "500": 13.33,
+            "600": 18.67,
+            "700": 25.78,
+            "800": 37.33,
+            "900": 47.11,
+            "1000": 58.44,
+            "1200": 87.56
+        };
+
+        document.getElementById('generate').addEventListener('click', function() {
+            const keypoint = document.getElementById('keypoint').value;
+
+            const fiberglassValue = fiberglassData[keypoint];
+            const needleFeltValue = needleFeltData[keypoint];
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            const chartData = {
+                labels: ['Fiberglass', 'Needle Felt'],
+                datasets: [{
+                    label: `Value at ${keypoint}`,
+                    data: [fiberglassValue, needleFeltValue],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            // Clear previous chart if it exists
+            if (window.barChart) {
+                window.barChart.destroy();
+            }
+
+// Create a new bar chart
+window.barChart = new Chart(ctx, {
+    type: 'bar',
+    data: chartData,
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Value'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Material'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+                    }
+                }
+            }
+        }
+    }
+});
+});
+</script>
+</body>
+</html>

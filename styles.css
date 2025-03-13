@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    opacity: 0; /* Start with the body hidden */
+    transition: opacity 1s ease-in; /* Transition effect for opacity */
+}
+
+body.loaded {
+    opacity: 1; /* Fade in effect */
+}
+
+.container {
+    display: flex;
+    justify-content: center; /* Center the forms horizontally */
+    align-items: flex-start; /* Align items at the start vertically */
+    gap: 20px; /* Space between the forms */
+    margin: 0 auto; /* Center the container */
+}
+
+/* Other existing styles remain unchanged */
+
+.form-container {
+    width: 300px; /* Fixed width for the forms */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white; /* White background for the forms */
+}
+ß
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+label {
+    display: block; /* Make labels block elements */
+    margin: 10px 0 5px; /* Add margin for spacing */
+}
+
+input, select {
+    width: 100%; /* Full width for inputs and selects */
+    padding: 8px; /* Padding inside inputs and selects */
+    margin-bottom: 10px; /* Space below each input/select */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%; /* Full width for the button */
+    padding: 10px;
+    background-color: #94bad2; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+button:hover {
+    background-color: #77b7ba; /* Darker green on hover */
+}
+
+.result {
+    margin-top: 20px; /* Space above the result */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e9ecef; /* Light gray background for results */
+}
+

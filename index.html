@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Calculator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="styles2.css">
+</head>
+<body>
+    <div class="welcome-container">
+        <h1 class="fade-in">Welcome to the Carbon Calculator!</h1>
+        <p class="fade-in">Your journey to a greener future starts here.</p>
+        <a href="material.html" class="start-button bounce">Get Started</a>
+    </div>
+    <script>
+        // Add a class to trigger the fade-in animation after the page loads
+        window.onload = function() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('visible');
+                }, index * 500); // Stagger the animations
+            });
+        };
+    </script>
+</body>
+</html>

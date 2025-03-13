@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bar Graph</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Material Data Selector</h1>
+        <label for="material">Select Material:</label>
+        <select id="material">
+            <option value="fiberglass">Fiberglass</option>
+            <option value="needleFelt">Needle Felt</option>
+        </select>
+
+        <label for="keypoint">Select Keypoint:</label>
+        <select id="keypoint">
+            <option value="200">200</option>
+            <option value="250">250</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+            <option value="1000">1000</option>
+            <option value="1200">1200</option>
+        </select>
+
+        <button id="generate">Generate Graph</button>
+
+        <canvas id="barChart" width="400" height="200"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
