@@ -13,12 +13,23 @@ body.loaded {
 
 .container {
     display: flex;
+    box-direction: column;
     justify-content: center; /* Center the forms horizontally */
     align-items: flex-start; /* Align items at the start vertically */
     gap: 20px; /* Space between the forms */
     margin: 0 auto; /* Center the container */
 }
+.partners
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.part_img
+{
+    max-width: 80px;
 
+}
 /* Other existing styles remain unchanged */
 
 .form-container {

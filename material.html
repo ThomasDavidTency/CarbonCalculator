@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+        /* Your existing styles here */
         body {
             display: flex;
             flex-direction: column;
@@ -18,7 +19,6 @@
             margin: 0;
             padding: 20px;
             opacity: 0; /* Start with the body hidden */
-            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #ffffff, #b5e6f4);
             background-size: 400% 400%;
             animation: gradient 1s ease infinite;
@@ -55,7 +55,7 @@
             border-radius: 10px;
             height: 600px;
             width: 80%; /* Adjust width as needed */
-            max-width: 800px; /* Optional: set a max width */
+            /* max-width: 1100px; Optional: set a max width */
         }
         .layer-options {
             margin: 10px;
@@ -66,6 +66,10 @@
         }
 
         h1 {
+            text-align: center;
+            margin-bottom: 20px; /* Space below the main heading */
+        }
+        h1.main {
             text-align: center;
             margin-bottom: 20px; /* Space below the main heading */
         }
@@ -96,6 +100,13 @@
             border-radius: 4px;
             cursor: pointer; /* Pointer cursor on hover */
         }
+        button.remove{
+            background-color: #cf6247;
+            max-width: 30%;
+        }
+        button.add{
+            background-color: rgb(20, 146, 146);
+        }
 
         button:hover {
             background-color: #218838; /* Darker green on hover */
@@ -114,18 +125,37 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: white; /* White background for the chart container */
-}
+        }
 
-#myChart {
-    width: 100%;
-    height: 400px; /* Set height for the chart */
-}
+        #myChart {
+            width: 100%;
+            height: 400px; /* Set height for the chart */
+        }
+        .Machinary-form
+        {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .Freight-form
+        {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
     </style>
 </head>
-<body>
-    <h1>Material Comparison</h1>
-   
+<body onload="fetchData()">
+    <h1 style="font-size: 90px; color: rgb(14, 83, 83); margin-bottom: 1px;">Tahi Waro</h1>
+    <p> Carbon Calculator for Pipelining Methods</p>
+    <br><br>
+    <p>Navigate and click on the map for construction location</p>
     <div id="map"></div>
+    <div class="coordinates" id="coordinates">Click on the map to place a beacon!</div>
     <div class="layer-options">
         <label for="layerSelect">Choose a map layer:</label>
         <select id="layerSelect">
@@ -134,11 +164,13 @@
             <option value="terrain">Terrain</option>
         </select>
     </div>
-    <div class="coordinates" id="coordinates">Click on the map to place a beacon!</div>
-    <div class="container">
-        <div class="form-container">
-            <h2>D&L Method</h2>
-            <form id="dlForm">
+    <br><br>
+    <div class = "Materials">
+        <h1> Materials Comparision</h1>
+        <form id="combined">
+        <div class="container">
+            <div class="form-container">
+                <h2>D&L Method</h2>
                 <label for="materialTypeDL">Type of Material:</label>
                 <select id="materialTypeDL" required>
                     <option value="Concrete">Concrete</option>
@@ -156,103 +188,145 @@
                 <label for="depthDL">Depth of the Pipe (mm):</label>
                 <input type="number" id="depthDL" required>
 
-                <button type="submit">Calculate Emissions</button>
-            </form>
-            <div id="resultDL" class="result"></div>
-        </div>
+                <div id="resultDL" class="result"></div>
+            </div>
 
-        <div class="form-container">
-            <h2>CIPP</h2>
-            <form id="cippForm">
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cippForm">
                 <label for="materialTypeCIPP">Type of Material:</label>
                 <select id="materialTypeCIPP" disabled>
                     <option value="Concrete">Concrete</option>
                 </select>
 
-                    <label for="nominalDiameterCIPP">Nominal Diameter:</label>
-                    <select id="nominalDiameterCIPP" required>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-    
-                    <label for="liningMaterialCIPP">CIPP Lining Material:</label>
-                    <select id="liningMaterialCIPP" required>
-                        <option value="Generic - Needle Felt + PE Resin">Generic - Needle Felt + PE Resin</option>
-                        <option value="Generic - Fiberglass + PE Resin">Generic - Fiberglass + PE Resin</option>
-                    </select>
-    
-                    <label for="curingMethodCIPP">Curing Method:</label>
-                    <select id="curingMethodCIPP" required>
-                        <option value="UV">UV</option>
-                        <option value="Steamed">Steamed</option>
-                        <option value="Hot Water Cured">Hot Water Cured</option>
-                    </select>
-    
-                    <button type="submit">Calculate Emissions</button>
-                </form>
+                <label for="nominalDiameterCIPP">Nominal Diameter:</label>
+                <select id="nominalDiameterCIPP" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+
+                <label for="liningMaterialCIPP">CIPP Lining Material:</label>
+                <select id="liningMaterialCIPP" required>
+                    <option value="Generic - Needle Felt + PE Resin">Generic - Needle Felt + PE Resin</option>
+                    <option value="Generic - Fiberglass + PE Resin">Generic - Fiberglass + PE Resin</option>
+                </select>
+
+                <label for="curingMethodCIPP">Curing Method:</label>
+                <select id="curingMethodCIPP" required>
+                    <option value="UV">UV</option>
+                    <option value="Steamed">Steamed</option>
+                    <option value="Hot Water Cured">Hot Water Cured</option>
+                </select>
+                
                 <div id="resultCIPP" class="result"></div>
             </div>
+        </div>
+        </form>
+        <br>
+    <button type="submit" id="calculateEmissions">Calculate Emissions for Both</button>
+    </div>
+    <br><br><br>
+    <div class = "Machinary Comparision">
+        <h1> Machinary</h1>
+        <div class="Machinary-form">
+            <div class="form-container">
+                <h2>D&L method</h2>
+                <form id="dl-form"></form>
+                <button class="add" type="button" onclick="addMachineRow('dl-form')">Add Machine</button>
+                <!-- <p id="dl-total">Total Emission for D&L: 0 kg CO2</p> -->
+            </div>
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cipp-form"></form>
+                <button class="add" type="button" onclick="addMachineRow('cipp-form')">Add Machine</button>
+                <!-- <p id="cipp-total">Total Emission for CIPP: 0 kg CO2</p> -->
+            </div>
+        </div>
+        <button type="button" onclick="calculateMachEmission()" style="display: block; margin: 20px auto;">Calculate Emission</button>
+        <!-- <h3 id="mach -emission-result" style="text-align: center; margin-top: 20px;"></h3> -->
+    </div>
+    <br><br><br>
 
-    
-        <script src="script.js"></script>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script>
-            // Add a class to the body when the page is fully loaded
-            window.addEventListener('load', function() {
-                document.body.classList.add('loaded');
+    <div class = "Freights Comparision">
+        <h1>Freights</h1>
+        <div class="Freight-form">
+            <div class="form-container">
+                <h2>D&L method</h2>
+                <form id="dl-freight"></form>
+                <button class="add" type="button" onclick="addFreightRow('dl-freight')">Add Freight</button>
+                <div id="resultF-DL" class = "result"></div>
+            </div>
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cipp-freight"></form>
+                <button class="add" type="button" onclick="addFreightRow('cipp-freight')">Add Freight</button>
+                <div id="resultF-CIPP" class = "result"></div>
+            </div>
+        </div>
+        <br>
+        <button type="button" onclick="calculateTotalFrieghtEmission()">Calculate Emission</button>
+        <!-- <h3 id="emission-result" style="text-align: center; margin-top: 20px;"></h3> -->
+    </div>
+
+
+    <script src="script.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Add a class to the body when the page is fully loaded
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+        // Initialize the map
+        const map = L.map('map').setView([-36.8485, 174.7633], 13); // Auckland coordinates
+
+        // Define the base layers
+        const layers = {
+            streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }),
+            satellite: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17,
+                attribution: '© OpenTopoMap'
+            }),
+            terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17,
+                attribution: '© OpenTopoMap'
+            })
+        };
+
+        // Add the default layer
+        layers.streets.addTo(map);
+
+        // Change layer based on selection
+        document.getElementById('layerSelect').addEventListener('change', function() {
+            const selectedLayer = this.value;
+            map.eachLayer(function(layer) {
+                map.removeLayer(layer);
             });
-            // Initialize the map
-            const map = L.map('map').setView([-36.8485, 174.7633], 13); // Auckland coordinates
+            layers[selectedLayer].addTo(map);
+        });
 
-// Define the base layers
-const layers = {
-    streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }),
-    satellite: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 17,
-        attribution: '© OpenTopoMap'
-    }),
-    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 17,
-        attribution: '© OpenTopoMap'
-    })
-};
+        // Add click event to place a beacon
+        map.on('click', function(e) {
+            // Get the clicked location
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
 
-// Add the default layer
-layers.streets.addTo(map);
+            // Place a marker (beacon) at the clicked location
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup(`Beacon placed at: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+                .openPopup();
 
-// Change layer based on selection
-document.getElementById('layerSelect').addEventListener('change', function() {
-    const selectedLayer = this.value;
-    map.eachLayer(function(layer) {
-        map.removeLayer(layer);
-    });
-    layers[selectedLayer].addTo(map);
-});
+            // Display the coordinates below the map
+            document.getElementById('coordinates').innerText = `Beacon placed at: Latitude: ${lat.toFixed(5)}, Longitude: ${lng.toFixed(5)}`;
+        });
 
-// Add click event to place a beacon
-map.on('click', function(e) {
-    // Get the clicked location
-    const lat = e.latlng.lat;
-    const lng = e.latlng.lng;
-
-    // Place a marker (beacon) at the clicked location
-    L.marker([lat, lng]).addTo(map)
-        .bindPopup(`Beacon placed at: ${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-        .openPopup();
-
-    // Display the coordinates below the map
-    document.getElementById('coordinates').innerText = `Beacon placed at: Latitude: ${lat.toFixed(5)}, Longitude: ${lng.toFixed(5)}`;
-});
-
-document.addEventListener('mousemove', function(e) {
-    const x = e.clientX / window.innerWidth;
-    const y = e.clientY / window.innerHeight;
-    document.body.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #ffffff, #b5e6f4)`;
-});
-
-
-        </script>
-    </body>
-    </html>
+        document.addEventListener('mousemove', function(e) {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            document.body.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #ffffff, #b5e6f4)`;
+        });
+        
+    </script>
+</body>
+</html>
