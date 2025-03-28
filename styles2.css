@@ -4,13 +4,29 @@ body {
     background: linear-gradient(to right, #e0f6ff, #85d9ec);
     color: white;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     text-align: center;
     overflow: hidden; /* Prevent scrolling during animation */
 }
+.partners
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.part-img img
+{   
+    background-color: #e0f6ff3e;
+    padding: 20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 30px;
 
+}
 .welcome-container {
     background: rgba(0, 0, 0, 0.7);
     padding: 40px;
@@ -73,6 +89,8 @@ p {
 .fade-in {
     opacity: 0; /* Start hidden */
 }
+
+
 
 .fade-in.visible {
     opacity: 1; /* Fade in */
