@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallel Donut Charts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 50px;
+      display: none; /* Initially hidden */
+    }
+    canvas {
+      width: 45%;
+      height: 400px;
+    }
+    .button-container {
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="button-container">
+    <button onclick="showCharts()">Show Charts</button>
+  </div>
+
+  <div class="chart-container" id="chartSection">
+    <div>
+      <canvas id="cippDonutChart"></canvas>
+    </div>
+    <div>
+      <canvas id="dlDonutChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // Function to draw a donut chart
+    function drawDonutChart(chartId, title, data) {
+      const ctx = document.getElementById(chartId).getContext('2d');
+
+      const config = {
+        type: 'doughnut', // Donut chart type
+        data: {
+          labels: ['Transport', 'Freight', 'Material'], // Categories
+          datasets: [{
+            data: data, // Dynamic data
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'], // Colors
+            hoverBackgroundColor: ['#ff5a7d', '#48a9e6', '#f9c100'], // Hover colors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.raw + ' kg CO₂'; // Custom tooltip
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: title,
+              font: {
+                size: 18
+              }
+            }
+          },
+          cutout: '70%', // Hole size for donut chart
+          hover: {
+            mode: 'nearest',
+            intersect: false,
+            animationDuration: 400, // Hover animation duration
+          },
+          elements: {
+            arc: {
+              hoverOffset: 10, // Increase space between segments on hover
+              hoverBorderWidth: 10, // Optional: border width on hover
+              borderColor: 'white', // Optional: border color on hover
+            }
+          }
+        }
+      };
+
+      // Create the chart
+      new Chart(ctx, config);
+    }
+
+    // Function to show the charts
+    function showCharts() {
+      const chartDiv = document.getElementById('chartSection');
+      chartDiv.style.display = 'flex'; // Make the chart container visible
+
+      // CIPP Data (Example data)
+      const cippData = [150, 100, 50]; // Transport, Freight, Material for CIPP
+      drawDonutChart('cippDonutChart', 'CIPP CO₂ Emissions Distribution', cippData);
+
+      // D&L Data (Example data)
+      const dlData = [180, 120, 80]; // Transport, Freight, Material for D&L
+      drawDonutChart('dlDonutChart', 'D&L CO₂ Emissions Distribution', dlData);
+    }
+  </script>
+
+</body>
+</html>

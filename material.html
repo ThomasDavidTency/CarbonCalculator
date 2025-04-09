@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <style>
         /* Your existing styles here */
         body {
@@ -50,6 +51,17 @@
             border-radius: 5px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             background-color: white; /* White background for the forms */
+        }
+        body {
+        background-color: #f8f9fa;
+        padding: 2rem;
+        font-family: 'Segoe UI', sans-serif;
+        }
+        .chart-container {
+        width: 90%;
+        max-width: 800px;
+        margin: 2rem auto;
+        display: none;
         }
         #map {
             border-radius: 10px;
@@ -107,6 +119,14 @@
         button.add{
             background-color: rgb(20, 146, 146);
         }
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 50px;
+            display: none; /* Initially hidden */
+        }
+        
 
         button:hover {
             background-color: #218838; /* Darker green on hover */
@@ -119,13 +139,7 @@
             border-radius: 4px;
             background-color: #e9ecef; /* Light gray background for results */
         }
-        .chart-container {
-            margin-top: 40px; /* Space above the chart container */
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: white; /* White background for the chart container */
-        }
+
 
         #myChart {
             width: 100%;
@@ -150,9 +164,9 @@
     </style>
 </head>
 <body onload="fetchData()">
-    <h1 style="font-size: 90px; color: rgb(14, 83, 83); margin-bottom: 1px;">Tahi Waro</h1>
-    <p> Carbon Calculator for Pipelining Methods</p>
-    <br><br>
+    <h1 style="font-size: 90px; color: rgb(14, 83, 83); margin-bottom: 1px;">Tatai Waro</h1>
+    <p styles> Your Carbon Calculator for Pipelining Methods</p>
+    <br><br><br><br>
     <p>Navigate and click on the map for construction location</p>
     <div id="map"></div>
     <div class="coordinates" id="coordinates">Click on the map to place a beacon!</div>
@@ -166,7 +180,8 @@
     </div>
     <br><br>
     <div class = "Materials">
-        <h1> Materials Comparision</h1>
+        <h1> Materials Comparison</h1>
+        <p style="text-align: center;">Input the material details in both methods to estimate the carbon emission.</p>
         <form id="combined">
         <div class="container">
             <div class="form-container">
@@ -221,33 +236,47 @@
             </div>
         </div>
         </form>
+        <div id="MatchartSection" class="chart-container">
+            <canvas id="MatcomparisonChart" width="900" height="250"></canvas>
+        </div>
         <br>
-    <button type="submit" id="calculateEmissions">Calculate Emissions for Both</button>
+        <button type="submit" id="calculateEmissions">Calculate Emissions for Both</button>
+        <div id="chartSection" class="chart-container">
+            <h2>Carbon Emission Comparison: CIPP vs D&L</h2>
+            <canvas id="comparisonChart"></canvas>
+          </div>
     </div>
     <br><br><br>
     <div class = "Machinary Comparision">
-        <h1> Machinary</h1>
+        <h1> Machinery Comparison</h1>
+        <p style="text-align: center;">Input the Machinery required in both methods to estimate the carbon emission.</p>
         <div class="Machinary-form">
             <div class="form-container">
                 <h2>D&L method</h2>
-                <form id="dl-form"></form>
-                <button class="add" type="button" onclick="addMachineRow('dl-form')">Add Machine</button>
+                <form id="dl-machine"></form>
+                <button class="add" type="button" onclick="addMachineRow('dl-machine')">Add Machine</button>
+                <div id="resultM-DL" class = "result"></div>
                 <!-- <p id="dl-total">Total Emission for D&L: 0 kg CO2</p> -->
             </div>
             <div class="form-container">
                 <h2>CIPP</h2>
-                <form id="cipp-form"></form>
-                <button class="add" type="button" onclick="addMachineRow('cipp-form')">Add Machine</button>
+                <form id="cipp-machine"></form>
+                <button class="add" type="button" onclick="addMachineRow('cipp-machine')">Add Machine</button>
+                <div id="resultM-CIPP" class = "result"></div>
                 <!-- <p id="cipp-total">Total Emission for CIPP: 0 kg CO2</p> -->
             </div>
         </div>
-        <button type="button" onclick="calculateMachEmission()" style="display: block; margin: 20px auto;">Calculate Emission</button>
+        <div id="MachinerychartSection" class="chart-container">
+            <canvas id="MachinerycomparisonChart" width="900" height="250"></canvas>
+        </div>
+        <button type="button" onclick="calculateTotalMachineryEmission()" style="display: block; margin: 20px auto;">Calculate Emission</button>
         <!-- <h3 id="mach -emission-result" style="text-align: center; margin-top: 20px;"></h3> -->
     </div>
     <br><br><br>
 
     <div class = "Freights Comparision">
-        <h1>Freights</h1>
+        <h1>Freights Comparison</h1>
+        <p style="text-align: center;">Input the possible freight required in both methods to estimate the carbon emission.</p>
         <div class="Freight-form">
             <div class="form-container">
                 <h2>D&L method</h2>
@@ -262,10 +291,26 @@
                 <div id="resultF-CIPP" class = "result"></div>
             </div>
         </div>
+        <div id="FreightchartSection" class="chart-container">
+            <canvas id="freightcomparisonChart" width="900" height="250"></canvas>
+        </div>
         <br>
         <button type="button" onclick="calculateTotalFrieghtEmission()">Calculate Emission</button>
         <!-- <h3 id="emission-result" style="text-align: center; margin-top: 20px;"></h3> -->
     </div>
+    <br><br><br>
+    <div class="button-container">
+        <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button>
+      </div>
+    
+      <div class="chart-container" id="chartSection">
+        <div>
+          <canvas id="cippDonutChart"></canvas>
+        </div>
+        <div>
+          <canvas id="dlDonutChart"></canvas>
+        </div>
+      </div>
 
 
     <script src="script.js"></script>

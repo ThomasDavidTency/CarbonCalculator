@@ -68,6 +68,20 @@ const concreteData = {
     "DN1800": { carbonConcrete: 409.21, asphaltCO2: 34.99, aggregateCO2: -8.37 }
 };
 
+let material_vals = [0, 0];
+
+let chartInstanceMaterial = null;
+let chartInstanceMachinary = null;
+let chartInstanceFreight = null;
+let cippdonut = null;
+let donut = null;
+
+let machDL = 0;
+let frDL = 0;
+let matDL = 0;
+let machCIPP = 0;
+let frCIPP = 0;
+let matCIPP = 0;
 async function fetchData() {
     try {
         const response = await fetch('https://script.google.com/macros/s/AKfycby-_Hl9AtdtjBmRXll8XkKK4LpdVCQwEyavAxL3yvoMEKaEAWx2_eP-jfu-nTa821uz/exec'); // Replace with your actual API endpoint
@@ -123,7 +137,7 @@ updateNominalDiameterOptions('CIPP');
 // Combined function to calculate emissions for both D&L Method and CIPP
 document.getElementById('calculateEmissions').addEventListener('click', function(event) {
     event.preventDefault();
-
+    
     // D&L Method calculations
     const materialTypeDL = document.getElementById('materialTypeDL').value;
     const nominalDiameterDL = document.getElementById('nominalDiameterDL').value;
@@ -137,8 +151,10 @@ document.getElementById('calculateEmissions').addEventListener('click', function
         const pipeInfo = concreteData[nominalDiameterDL];
 
         if (pipeInfo) {
-            totalCarbonEmissionDL = (pipeInfo.carbonConcrete + pipeInfo.asphaltCO2 + pipeInfo.aggregateCO2) * lengthDL; // kgCO2e
 
+            totalCarbonEmissionDL = (pipeInfo.carbonConcrete + pipeInfo.asphaltCO2 + pipeInfo.aggregateCO2) * lengthDL; // kgCO2e
+            matDL = totalCarbonEmissionDL;
+            material_vals[0]=totalCarbonEmissionDL;
             resultMessageDL = `
                 <h2>Total Carbon Emission (D&L Method)</h2>
                 <p>For a pipe with nominal diameter ${nominalDiameterDL}, length ${lengthDL} m, and depth ${depthDL} mm:</p>
@@ -151,8 +167,9 @@ document.getElementById('calculateEmissions').addEventListener('click', function
         const pipeInfo = hdpeData[nominalDiameterDL];
 
         if (pipeInfo) {
-            totalCarbonEmissionDL = (pipeInfo.aggregateCO2 + pipeInfo.totalEmbodiedCarbon + pipeInfo.asphaltCO2) * lengthDL; // kgCO2e
-
+            totalCarbonEmissionDL = (pipeInfo.carbonConcrete + pipeInfo.asphaltCO2 + pipeInfo.aggregateCO2) * lengthDL; // kgCO2e
+            material_vals[0]=totalCarbonEmissionDL;
+            matDL = totalCarbonEmissionDL;
             resultMessageDL = `
                 <h2>Total Carbon Emission (D&L Method)</h2>
                 <p>For a pipe with nominal diameter ${nominalDiameterDL}, length ${lengthDL} m, and depth ${depthDL} mm:</p>
@@ -177,7 +194,9 @@ document.getElementById('calculateEmissions').addEventListener('click', function
 
         if (co2PerMeter) {
             totalCarbonEmissionCIPP = co2PerMeter * lengthDL; // kgCO2e
-
+            totalCarbonEmissionDL = (pipeInfo.carbonConcrete + pipeInfo.asphaltCO2 + pipeInfo.aggregateCO2) * lengthDL; // kgCO2e
+            matCIPP = totalCarbonEmissionCIPP;
+            material_vals[1]=totalCarbonEmissionDL;
             resultMessageCIPP = `
                 <h2>Total Carbon Emission (CIPP - Fiberglass)</h2>
                 <p>For a pipe with nominal diameter ${nominalDiameterCIPP}, length ${lengthDL} m:</p>
@@ -188,9 +207,12 @@ document.getElementById('calculateEmissions').addEventListener('click', function
         }
     } else if (liningMaterial === "Generic - Needle Felt + PE Resin") {
         const co2PerMeter = needleFeltData[nominalDiameterCIPP];
+        
 
         if (co2PerMeter) {
             totalCarbonEmissionCIPP = co2PerMeter * lengthDL; // kgCO2e
+            matCIPP = totalCarbonEmissionCIPP;
+            material_vals[1]=totalCarbonEmissionDL;
 
             resultMessageCIPP = `
                 <h2>Total Carbon Emission (CIPP - Needle Felt)</h2>
@@ -204,6 +226,13 @@ document.getElementById('calculateEmissions').addEventListener('click', function
 
     // Display the results for CIPP
     document.getElementById('resultCIPP').innerHTML = resultMessageCIPP;
+    showChart("MatchartSection", "MatcomparisonChart", totalCarbonEmissionDL, totalCarbonEmissionCIPP)
+    // const chartDiv = document.createElement('div');
+    //     chartDiv.id = 'material_chart';
+    //     chartDiv.style.width = '80%';
+    //     chartDiv.style.height = '500px';
+    //     document.body.appendChild(chartDiv);
+    // plotMachinaryResults(material_vals);
 });
 async function fetchData() {
     const response = await fetch('https://script.google.com/macros/s/AKfycby-_Hl9AtdtjBmRXll8XkKK4LpdVCQwEyavAxL3yvoMEKaEAWx2_eP-jfu-nTa821uz/exec'); // Replace with actual API endpoint
@@ -215,12 +244,12 @@ async function fetchData() {
 function populateMachDropdowns(data) {
     window.machineOptions = data.Machine.map(machine => `<option value="${machine.name}" data-consumption="${machine.Consumption}">${machine.name}</option>`).join('');
     window.fuelOptions = data.Fuel.map(fuel => `<option value="${fuel.name}" data-co2="${fuel.CO2Emm}">${fuel.name}</option>`).join('');
-    addMachineRow('dl-form');
-    addMachineRow('cipp-form');
+    addMachineRow('dl-machine');
+    addMachineRow('cipp-machine');
     window.freightOptions = data.Frieght.map(freight => `<option value="${freight.name}" data-co2="${freight.CO2Emm}">${freight.name}</option>`).join('');
-        window.freightTypeOptions = data.FrieghtOpt.map(option => `<option value="${option.name}">${option.name}</option>`).join('');
-        addFreightRow('dl-freight');
-        addFreightRow('cipp-freight');
+    window.freightTypeOptions = data.FrieghtOpt.map(option => `<option value="${option.name}">${option.name}</option>`).join('');
+    addFreightRow('dl-freight');
+    addFreightRow('cipp-freight');
 }
 function addFreightRow(sectionId) {
     const form = document.getElementById(sectionId);
@@ -245,17 +274,45 @@ function addFreightRow(sectionId) {
     `;
     form.appendChild(div);
 }
-function updateFreightEmission() {
-    document.querySelectorAll('.freight-entry').forEach(entry => {
-        const freight = entry.querySelector('[name="freight"]');
+
+function calculateTotalFrieghtEmission() {
+    let dlTotal = 0;
+    let cippTotal = 0;
+    
+    document.querySelectorAll('#dl-freight .freight-entry').forEach(entry => {
         const weight = entry.querySelector('[name="weight"]').value;
         const distance = entry.querySelector('[name="distance"]').value;
+        const freight = entry.querySelector('[name="freight"]');
         const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        
-        const emission = co2 * weight * distance;
-        entry.querySelector('.section-emission').innerText = `Estimated Emission: ${emission.toFixed(2)} kg CO2`;
+        dlTotal += co2 * weight * distance;
+        frDL = dlTotal;
     });
+    document.querySelectorAll('#cipp-freight .freight-entry').forEach(entry => {
+        const weight = entry.querySelector('[name="weight"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const freight = entry.querySelector('[name="freight"]');
+        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
+        cippTotal += co2 * weight * distance;
+        frCIPP = cippTotal
+    });
+    showChart("FreightchartSection", "freightcomparisonChart", dlTotal, cippTotal)
+    document.getElementById('resultF-DL').innerText = `Total Emission for D&L: ${dlTotal.toFixed(2)} kg CO2`;
+    document.getElementById('resultF-CIPP').innerText = `Total Emission for CIPP: ${cippTotal.toFixed(2)} kg CO2`;
+    console.log(`Total Emission for UP CIPP: ${cippTotal.toFixed(2)} kg CO2`)
+    console.log(`Total Emission for DL: ${dlTotal.toFixed(2)} kg CO2`)
 }
+
+// function updateFreightEmission() {
+//     document.querySelectorAll('.freight-entry').forEach(entry => {
+//         const freight = entry.querySelector('[name="freight"]');
+//         const weight = entry.querySelector('[name="weight"]').value;
+//         const distance = entry.querySelector('[name="distance"]').value;
+//         const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
+        
+//         const emission = co2 * weight * distance;
+//         entry.querySelector('.section-emission').innerText = `Estimated Emission: ${emission.toFixed(2)} kg CO2`;
+//     });
+// }
 
 function addMachineRow(sectionId) {
     const form = document.getElementById(sectionId);
@@ -280,36 +337,12 @@ function addMachineRow(sectionId) {
     `;
     form.appendChild(div);
 }
-function calculateTotalFrieghtEmission() {
-    let dlTotal = 0;
-    let cippTotal = 0;
-    
-    document.querySelectorAll('#dl-freight .freight-entry').forEach(entry => {
-        const weight = entry.querySelector('[name="weight"]').value;
-        const distance = entry.querySelector('[name="distance"]').value;
-        const freight = entry.querySelector('[name="freight"]');
-        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        dlTotal += co2 * weight * distance;
-    });
-    document.querySelectorAll('#cipp-freight .freight-entry').forEach(entry => {
-        const weight = entry.querySelector('[name="weight"]').value;
-        const distance = entry.querySelector('[name="distance"]').value;
-        const freight = entry.querySelector('[name="freight"]');
-        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        cippTotal += co2 * weight * distance;
-    });
 
-    document.getElementById('resultF-DL').innerText = `Total Emission for D&L: ${dlTotal.toFixed(2)} kg CO2`;
-    document.getElementById('resultF-CIPP').innerText = `Total Emission for CIPP: ${cippTotal.toFixed(2)} kg CO2`;
-    console.log(`Total Emission for CIPP: ${cippTotal.toFixed(2)} kg CO2`)
-    console.log(`Total Emission for DL: ${dlTotal.toFixed(2)} kg CO2`)
-}
-function clicktest() {
-    console.log("Button clicked");
-}
-function calculateMachEmission() {
-    let totalMachEmission = 0;
-    document.querySelectorAll('.machine-entry').forEach(entry => {
+function calculateTotalMachineryEmission() {
+    let dlMachTotal = 0;
+    let cippMachTotal = 0;
+    
+    document.querySelectorAll('#dl-machine .machine-entry').forEach(entry => {
         const machine = entry.querySelector('[name="machine"]');
         const quantity = entry.querySelector('[name="quantity"]').value;
         const fuel = entry.querySelector('[name="fuel"]');
@@ -317,7 +350,227 @@ function calculateMachEmission() {
         const consumption = parseFloat(machine.selectedOptions[0].dataset.consumption || 0);
         const co2 = parseFloat(fuel.selectedOptions[0].dataset.co2 || 0);
         
-        totalMachEmission += consumption * co2 * quantity * hours;
+        dlMachTotal += consumption * co2 * quantity * hours;
+        machDL = dlMachTotal;
+        console.log("calculate button is clicking")
     });
-    document.getElementById('emission-result').innerText = `Total Emission: ${totalEmission.toFixed(2)} kg CO2`;
+    document.querySelectorAll('#cipp-machine .machine-entry').forEach(entry => {
+        const machine = entry.querySelector('[name="machine"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const fuel = entry.querySelector('[name="fuel"]');
+        const hours = entry.querySelector('[name="hours"]').value;
+        const consumption = parseFloat(machine.selectedOptions[0].dataset.consumption || 0);
+        const co2 = parseFloat(fuel.selectedOptions[0].dataset.co2 || 0);
+        cippMachTotal += consumption * co2 * quantity * hours;
+        machCIPP = cippMachTotal;
+    });
+    showChart("MachinerychartSection", "MachinerycomparisonChart", dlMachTotal, cippMachTotal)
+
+    document.getElementById('resultM-DL').innerText = `Total Emission for D&L: ${dlMachTotal.toFixed(2)} kg CO2`;
+    document.getElementById('resultM-CIPP').innerText = `Total Emission for CIPP: ${cippMachTotal.toFixed(2)} kg CO2`;
+    console.log(`Total Emission for UP CIPP: ${dlMachTotal.toFixed(2)} kg CO2`)
+    console.log(`Total Emission for DL: ${cippMachTotal.toFixed(2)} kg CO2`)
 }
+
+function clicktest() {
+    console.log("Button clicked");
+}
+
+
+// function plotMachinaryResults(values) {
+//     const trace = {
+//         y: ["D&L method, CIPP"],
+//         x: values,
+//         type: 'bar',
+//         orientation: 'h',
+//         marker: { color: 'blue' }
+//     };
+
+//     const layout = {
+//         title: 'Method Results',
+//         xaxis: { title: 'Result Value' },
+//         yaxis: { title: 'Method' },
+//         margin: { l: 100, r: 50, t: 50, b: 50 }
+//     };
+
+//     Plotly.newPlot('material_chart', [trace], layout);
+// }
+
+function showChart(divC, chartName, cipp, dl) {
+    const chartDiv = document.getElementById(divC);
+    chartDiv.style.display = 'block';
+    if (divC == "MatchartSection") {
+        if (chartInstanceMaterial) {
+            chartInstanceMaterial.destroy();
+        }
+    }
+    if (divC == "FreightchartSection") {
+        if (chartInstanceFreight) {
+            chartInstanceFreight.destroy();
+        }
+    }
+    if (divC == "MachinerychartSection") {
+        if (chartInstanceMachinary) {
+            chartInstanceMachinary.destroy();
+        }
+    }
+    const ctx = document.getElementById(chartName).getContext('2d');
+    const data = {
+      labels: ["Methods"],
+      datasets: [
+        {
+          label: 'CIPP',
+          data: [dl], // Sample data
+          backgroundColor: '#4e79a7',
+          borderRadius: 10,
+          barThickness: 30
+        },
+        {
+          label: 'D&L',
+          data: [cipp], // Sample data
+          backgroundColor: '#f28e2b',
+          borderRadius: 10,
+          barThickness: 30
+        }
+      ]
+    };
+  
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              boxWidth: 20,
+              padding: 15,
+              font: {
+                size: 14
+              }
+            }
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${context.parsed.x} kg CO₂`;
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: 'Comparison of Pipe Installation Methods',
+            font: {
+              size: 18
+            }
+          }
+        },
+        scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'CO₂dfjf Emissions (kg)',
+                font: {
+                  size: 14
+                },
+                padding: { top: 20 }, // Adds a little space above the title
+                align: 'center', // Centers the title
+                rotation: 90 // Rotates the title by 90 degrees
+              }
+            },
+            y: {
+              title: {
+                display: false
+              }
+            }
+        }
+      }
+    };
+  
+    if (divC == "MatchartSection") {
+        chartInstanceMaterial = new Chart(ctx, config);
+    }
+    if (divC == "FreightchartSection") {
+        chartInstanceFreight = new Chart(ctx, config);
+    }
+    if (divC == "MachinerychartSection") {
+        MachinerychartSection = new Chart(ctx, config);
+    }
+  }
+
+  function drawDonutChart(chartId, title, data) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+
+    const config = {
+      type: 'doughnut', // Donut chart type
+      data: {
+        labels: ['Machinery', 'Freight', 'Material'], // Categories
+        datasets: [{
+          data: data, // Dynamic data
+          backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'], // Colors
+          hoverBackgroundColor: ['#ff5a7d', '#48a9e6', '#f9c100'], // Hover colors
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: {
+                size: 14
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ' + context.raw + ' kg CO₂'; // Custom tooltip
+              }
+            }
+          },
+          title: {
+            display: true,
+            text: title,
+            font: {
+              size: 18
+            }
+          }
+        },
+        cutout: '70%', // Hole size for donut chart
+        hover: {
+          mode: 'nearest',
+          intersect: false,
+          animationDuration: 400, // Hover animation duration
+        },
+        elements: {
+          arc: {
+            hoverOffset: 10, // Increase space between segments on hover
+            hoverBorderWidth: 10, // Optional: border width on hover
+            borderColor: 'white', // Optional: border color on hover
+          }
+        }
+      }
+    };
+
+    // Create the chart
+    new Chart(ctx, config);
+  }
+
+  // Function to show the charts
+  function showAnalysisCharts() {
+    const chartDiv = document.getElementById('chartSection');
+    chartDiv.style.display = 'flex'; // Make the chart container visible
+
+    // CIPP Data (Example data)
+    const cippData = [machCIPP, frCIPP, machCIPP]; // Transport, Freight, Material for CIPP
+    drawDonutChart('cippDonutChart', 'CIPP CO₂ Emissions Distribution', cippData);
+
+    // D&L Data (Example data)
+    const dlData = [machDL, frDL, machDL]; // Transport, Freight, Material for D&L
+    drawDonutChart('dlDonutChart', 'D&L CO₂ Emissions Distribution', dlData);
+  }
