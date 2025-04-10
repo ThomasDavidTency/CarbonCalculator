@@ -498,7 +498,7 @@ function showChart(divC, chartName, cipp, dl) {
         chartInstanceFreight = new Chart(ctx, config);
     }
     if (divC == "MachinerychartSection") {
-        MachinerychartSection = new Chart(ctx, config);
+        chartInstanceMachinary = new Chart(ctx, config);
     }
   }
 

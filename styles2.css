@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #e0f6ff, #85d9ec);
+    background: linear-gradient(to right, #808080, #ffffff);
     color: white;
     display: flex;
     flex-direction: column;
@@ -20,7 +20,7 @@ body {
 }
 .part-img img
 {   
-    background-color: #e0f6ff3e;
+    background-color: #b5b5b53e;
     padding: 20px;
     width: 100px;
     height: 100px;
