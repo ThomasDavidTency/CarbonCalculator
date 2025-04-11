@@ -140,6 +140,10 @@ button:hover {
     width: auto;
     margin-left: 20px
 }
+.featues{
+    align-items: center;
+
+}
 
 .nav-title a {
     color: white; /* Set color to white */
