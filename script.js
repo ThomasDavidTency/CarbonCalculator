@@ -67,7 +67,28 @@ const concreteData = {
     "DN1600": { carbonConcrete: 329.13, asphaltCO2: 31.16, aggregateCO2: -3.54 },
     "DN1800": { carbonConcrete: 409.21, asphaltCO2: 34.99, aggregateCO2: -8.37 }
 };
+// Show navbar on scroll
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 20) {
+        navbar.classList.add('show');
+    } else {
+        navbar.classList.remove('show');
+    }
+});
 
+function scrollToTopAndRefresh() {
+    // Smooth scroll to the top of the page
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+    // Wait for the scroll to complete before refreshing
+    setTimeout(function() {
+        location.reload(); // Reload the page after scroll
+    }, 500); // Adjust this delay if needed (500ms is a good start)
+}
 let material_vals = [0, 0];
 
 let chartInstanceMaterial = null;
@@ -82,6 +103,8 @@ let matDL = 0;
 let machCIPP = 0;
 let frCIPP = 0;
 let matCIPP = 0;
+
+
 async function fetchData() {
     try {
         const response = await fetch('https://script.google.com/macros/s/AKfycby-_Hl9AtdtjBmRXll8XkKK4LpdVCQwEyavAxL3yvoMEKaEAWx2_eP-jfu-nTa821uz/exec'); // Replace with your actual API endpoint

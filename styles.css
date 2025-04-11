@@ -7,6 +7,46 @@ body {
     transition: opacity 1s ease-in; /* Transition effect for opacity */
 }
 
+.home {
+    position: relative;
+    width: 100%;  /* Ensure the container fills the width */
+    height: 80vh;  /* Set a specific height or adjust as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Vertically center the content */
+    align-items: center;  /* Horizontally center the content */
+    text-align: center;  /* Center the text */
+  }
+
+  .home::before {
+    content: '';  /* Empty content for the pseudo-element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('title.jpg');  /* Background image */
+    background-size: cover;  /* Ensure the background image covers the container */
+    background-position: center;  /* Center the image */
+    opacity: 0.5;  /* Adjust the opacity of the background image */
+    z-index: -1;  /* Place the image behind the text */
+  }
+
+  .title {
+    font-size: 10em;  /* Set the title font size */
+    color: rgb(235, 235, 235);  /* Light color for title text */
+    font-weight: bold;  /* Keep the title bold */
+    margin-bottom: 10px;  /* Space below the title */
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);  /* Add text shadow */
+  }
+
+  .description {
+    font-size: 1.5em;  /* Set the font size for the description */
+    color: rgb(235, 235, 235);  /* Light color for description text */
+    font-weight: normal;  /* Make the description text not bold */
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+  }
+
 body.loaded {
     opacity: 1; /* Fade in effect */
 }
@@ -83,4 +123,107 @@ button:hover {
     border-radius: 4px;
     background-color: #e9ecef; /* Light gray background for results */
 }
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    padding: 15px;
+    z-index: 1000; /* Ensure it's on top of other content */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-icon {
+    height: 30px;
+    width: auto;
+    margin-left: 20px
+}
 
+.nav-title a {
+    color: white; /* Set color to white */
+    text-decoration: none;
+    font-size: 24px;
+    gap: 55px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    color: white; /* Set link color to white */
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.nav-links li a:hover {
+    color: #ffcc00; /* Change color when hovering */
+}
+
+.nav-links li a:focus {
+    color: #ffcc00; /* Change color when focused */
+}
+
+/* Push down rest of the content to avoid overlap */
+body {
+    margin: 0;
+    padding-top: 70px; /* adjust based on navbar height */
+}
+html {
+    scroll-behavior: smooth;
+}
+footer {
+    margin-top: 30px;
+    padding: 20px 30px;
+    background-color: #2c3e50;
+    color: #fff;
+    font-size: 14px;
+    border-top: 4px solid #1abc9c;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  
+  footer:hover {
+    background-color: #34495e;
+  }
+  
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .footer-content {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .footer-images {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .footer-images img {
+    height: 40px;
+    width: auto;
+    border-radius: 4px;
+  }
+  
+  .email-link {
+    color: #4882d4;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  
+  .email-link:hover {
+    color: #fff;
+    text-shadow: 0 0 8px #1abc9c;
+  }
+  
+  

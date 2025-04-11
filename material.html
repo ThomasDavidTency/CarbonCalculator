@@ -20,7 +20,7 @@
             margin: 0;
             padding: 20px;
             opacity: 0; /* Start with the body hidden */
-            background: linear-gradient(135deg, #ffffff, #b5e6f4);
+            background: linear-gradient(135deg, #559e6d, #ffffff);
             background-size: 400% 400%;
             animation: gradient 1s ease infinite;
             transition: background 0.5s ease;
@@ -164,8 +164,31 @@
     </style>
 </head>
 <body onload="fetchData()">
-    <h1 style="font-size: 90px; color: rgb(35, 50, 56); margin-bottom: 1px;">Tatai Waro</h1>
-    <p styles> Your Carbon Calculator for Pipelining Methods</p>
+    <nav class="navbar">
+        <!-- Link that scrolls to the top and refreshes the page -->
+        <div class="nav-title">
+            <a href="javascript:void(0);" onclick="scrollToTopAndRefresh()" class="refresh-link">Tatai Waro</a>
+            <a href="https://www.auckland.ac.nz/" target="_blank">
+                <img src="UoA-Logo-DarkBlue.png" alt="Icon 1" class="nav-icon" />
+            </a>
+
+            <a href="https://www.brianperrycivil.co.nz/our-story/pipe-works" target="_blank">
+                <img src="pipeworks2.png" alt="Icon 1" class="nav-icon" />
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#map">Map</a></li>
+            <li><a href="#Materials">Materials</a></li>
+            <li><a href="#Machinary">Machinery</a></li>
+            <li><a href="#Freights">Freights</a></li>
+            <li><a href="#chartSection">Analysis</a></li>
+        </ul>
+    </nav>
+    <div class="home" id="home">
+        <h1 class="title">Tatai Waro</h1>
+        <p class="description">Your Carbon Calculator for Pipelining Methods</p>
+    </div>
     <br><br><br><br>
     <p>Navigate and click on the map for construction location</p>
     <div id="map"></div>
@@ -178,8 +201,9 @@
             <option value="terrain">Terrain</option>
         </select>
     </div>
-    <br><br>
-    <div class = "Materials">
+    <br><br><br><br><br><br>
+    <div class="Materials" id="Materials">
+        <br><br><br>
         <h1> Materials Comparison</h1>
         <p style="text-align: center;">Input the material details in both methods to estimate the carbon emission.</p>
         <form id="combined">
@@ -247,7 +271,8 @@
           </div>
     </div>
     <br><br><br>
-    <div class = "Machinary Comparision">
+    <div class="Machinary-Comparision" id="Machinary">
+        <br><br><br><br>
         <h1> Machinery Comparison</h1>
         <p style="text-align: center;">Input the Machinery required in both methods to estimate the carbon emission.</p>
         <div class="Machinary-form">
@@ -274,7 +299,8 @@
     </div>
     <br><br><br>
 
-    <div class = "Freights Comparision">
+    <div class="Freights-Comparision" id="Freights">
+        <br><br><br>
         <h1>Freights Comparison</h1>
         <p style="text-align: center;">Input the possible freight required in both methods to estimate the carbon emission.</p>
         <div class="Freight-form">
@@ -299,23 +325,67 @@
         <!-- <h3 id="emission-result" style="text-align: center; margin-top: 20px;"></h3> -->
     </div>
     <br><br><br>
-    <div class="button-container">
-        <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button>
-      </div>
     
-      <div class="chart-container" id="chartSection">
+    <div id="chartSection">
+        <h1>More Insights</h1>
+        <p>In Construction. Coming soon.</p>
+        <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button>
+    </div>
+    
+    <!-- <div class="chart-container" id="chartSection">
         <div>
           <canvas id="cippDonutChart"></canvas>
         </div>
         <div>
           <canvas id="dlDonutChart"></canvas>
         </div>
-      </div>
+    </div> -->
+    <br><br><br><br>
+    
+   
+    
+    <div class="Freights-Comparision" id="Transport">
+        <h1>Transportation Comparison</h1>
+        <p style="text-align: center;">In Construction. Coming soon.</p>
+        
+    </div>
+    <br><br><br><br>
+    <div class="Freights-Comparision" id="CarbonCost">
+        <h1>Carbon Cost</h1>
+        <p>In Construction. Coming soon.</p>
+    </div>
+    <br><br><br><br>
+    <div class="Freights-Comparision" id="Traffic">
+        <h1>Traffic Comparison</h1>
+        <p style="text-align: center;"> In Construction. Coming soon.</p>
+    </div>
+    
+    <footer>
+        <div class="footer-container">
+          
+          <div class="footer-content">
+            <p>Developed for <strong>PipeWorks</strong> by <strong>Group 6</strong> – Capstone Project UoA</p>
+            <p>
+              Contactca us at:
+              <a href="mailto: ttho623@aucklanduni.ac.nz, d" class="email-link" title="Send us an email!">
+                group6@aucklanduni.com
+              </a>
+            </p>
+            <br>
+            <p>&copy; <span id="year"></span> PipeWorks. All rights reserved.</p>
+          </div>
+          <div class="footer-images">
+            <img src="pipeworks.png" alt="Logo 1">
+            <img src="UoA-Logo-DarkBlue.png" alt="Logo 2">
+          </div>
+        </div>
+      </footer>
 
 
     <script src="script.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
         // Add a class to the body when the page is fully loaded
         window.addEventListener('load', function() {
             document.body.classList.add('loaded');
