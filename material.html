@@ -80,6 +80,7 @@
         h1 {
             text-align: center;
             margin-bottom: 20px; /* Space below the main heading */
+            
         }
         h1.main {
             text-align: center;
@@ -161,6 +162,31 @@
             justify-content: center;
             gap: 20px;
         }
+
+        .TransportDom-form
+        {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .TransportPub-form
+        {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .TransportAir-form
+        {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
     </style>
 </head>
 <body onload="fetchData()">
@@ -182,7 +208,7 @@
             <li><a href="#Materials">Materials</a></li>
             <li><a href="#Machinary">Machinery</a></li>
             <li><a href="#Freights">Freights</a></li>
-            <li><a href="#chartSection">Analysis</a></li>
+            <li><a href="#transport">Transport</a></li>
         </ul>
     </nav>
     <div class="home" id="home">
@@ -202,9 +228,8 @@
         </select>
     </div>
     <br><br><br><br><br><br>
+    <h1 class="barring"> Materials Comparison</h1>
     <div class="Materials" id="Materials">
-        <br><br><br>
-        <h1> Materials Comparison</h1>
         <p style="text-align: center;">Input the material details in both methods to estimate the carbon emission.</p>
         <form id="combined">
         <div class="container">
@@ -270,10 +295,10 @@
             <canvas id="comparisonChart"></canvas>
           </div>
     </div>
-    <br><br><br>
+    <br><br><br><br><br>
+    <h1 class="barring"> Machinery Comparison</h1>
     <div class="Machinary-Comparision" id="Machinary">
-        <br><br><br><br>
-        <h1> Machinery Comparison</h1>
+
         <p style="text-align: center;">Input the Machinery required in both methods to estimate the carbon emission.</p>
         <div class="Machinary-form">
             <div class="form-container">
@@ -299,9 +324,8 @@
     </div>
     <br><br><br>
 
+    <h1 class="barring">Freights Comparison</h1>
     <div class="Freights-Comparision" id="Freights">
-        <br><br><br>
-        <h1>Freights Comparison</h1>
         <p style="text-align: center;">Input the possible freight required in both methods to estimate the carbon emission.</p>
         <div class="Freight-form">
             <div class="form-container">
@@ -326,11 +350,7 @@
     </div>
     <br><br><br>
     
-    <div id="chartSection">
-        <h1>Graphical Insights</h1>
-        <p style="text-align: center;">In development. Coming soon.</p>
-        <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button>
-    </div>
+  
     
     <!-- <div class="chart-container" id="chartSection">
         <div>
@@ -340,20 +360,85 @@
           <canvas id="dlDonutChart"></canvas>
         </div>
     </div> -->
+    <br><br><br><br>
+    <h1 class="barring">Transportation Comparison</h1>
     <br>
-    <div class="Freights-Comparision" id="Transport">
-        <h1>Transportation Comparison</h1>
+    <div class="Transport-Comparision" id="transport">
+        <p style="text-align: center;">Input the possible freight required in both methods to estimate the carbon emission.</p>
+        <h2 class="subbarring">Public Travel</h2>
+        <br>
+        <div class="TransportPub-form">
+            <div class="form-container">
+                <h2>D&L method</h2>
+                <form id="dl-transportpub"></form>
+                <button class="add" type="button" onclick="addTransportPRow('dl-transportpub')">Add Transport</button>
+                <div id="resultPub-DL" class = "result"></div>
+            </div>
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cipp-transportpub"></form>
+                <button class="add" type="button" onclick="addTransportPRow('cipp-transportpub')">Add transport</button>
+                <div id="resultPub-CIPP" class = "result"></div>
+            </div>
+        </div>
+        <br><br><br>
+        <h2 class="subbarring">Air Travel</h2>
+        <br>
+        <div class="TransportAir-form">
+            <div class="form-container">
+                <h2>D&L method</h2>
+                <form id="dl-transportair"></form>
+                <button class="add" type="button" onclick="addTransportARow('dl-transportair')">Add Transport</button>
+                <div id="resultAir-DL" class = "result"></div>
+            </div>
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cipp-transportair"></form>
+                <button class="add" type="button" onclick="addTransportARow('cipp-transportair')">Add transport</button>
+                <div id="resultAir-CIPP" class = "result"></div>
+            </div>
+        </div>
+        <br><br><br>
+        <h2 class="subbarring">Domestic Travel</h2>
+        <br>
+        <div class="TransportDom-form">
+            <div class="form-container">
+                <h2>D&L method</h2>
+                <form id="dl-transportdom"></form>
+                <button class="add" type="button" onclick="addTransportDRow('dl-transportdom')">Add Transport</button>
+                <div id="resultDom-DL" class = "result"></div>
+            </div>
+            <div class="form-container">
+                <h2>CIPP</h2>
+                <form id="cipp-transportdom"></form>
+                <button class="add" type="button" onclick="addTransportDRow('cipp-transportdom')">Add transport</button>
+                <div id="resultDom-CIPP" class = "result"></div>
+            </div>
+        </div>
+        <br><br><br>
+        <div class="TransportDom-form" >
+            <div id="resultTrans-DL" style="width: 100%;" class = "result"></div>
+            <div id="resultTrans-CIPP" style="width: 100%;" class = "result"></div>
+        </div>
+        <button type="button" onclick="calculateTotalTranspubEmission()" style="display: block; margin: 20px auto;">Calculate New Emission</button>
+        <div id="TransportchartSection" class="chart-container">
+            <canvas id="transportcomparisonChart" width="900" height="250"></canvas>
+        </div>
+    <br><br><br><br><br>
+
+    <div id="chartSection">
+        <h1 class="barring">Graphical Insights</h1>
         <p style="text-align: center;">In development. Coming soon.</p>
-        
+        <!-- <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button> -->
     </div>
-    <br>
+
     <div class="Freights-Comparision" id="CarbonCost">
-        <h1>Carbon Cost</h1>
-        <p>In development. Coming soon.</p>
+        <h1 class="barring">Carbon Cost</h1>
+        <p style="text-align: center;"> In development. Coming soon.</p>
     </div>
     <br>
     <div class="Freights-Comparision" id="Traffic">
-        <h1>Traffic Comparison</h1>
+        <h1 class="barring">Traffic Comparison</h1>
         <p style="text-align: center;"> In development. Coming soon.</p>
     </div>
     

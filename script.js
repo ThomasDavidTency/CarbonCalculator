@@ -94,6 +94,7 @@ let material_vals = [0, 0];
 let chartInstanceMaterial = null;
 let chartInstanceMachinary = null;
 let chartInstanceFreight = null;
+let chartInstanceTransport = null;
 let cippdonut = null;
 let donut = null;
 
@@ -103,6 +104,10 @@ let matDL = 0;
 let machCIPP = 0;
 let frCIPP = 0;
 let matCIPP = 0;
+let transCIPP = 0;
+let transDL = 0;
+
+
 
 
 async function fetchData() {
@@ -113,6 +118,7 @@ async function fetchData() {
         
         // Populate the dropdowns with data from the API
         populateNominalDiameterOptions(data);
+        console.log(data.CommDom)
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -261,6 +267,7 @@ async function fetchData() {
     const response = await fetch('https://script.google.com/macros/s/AKfycby-_Hl9AtdtjBmRXll8XkKK4LpdVCQwEyavAxL3yvoMEKaEAWx2_eP-jfu-nTa821uz/exec'); // Replace with actual API endpoint
     const data = await response.json();
     console.log(data);
+
     populateMachDropdowns(data);
 }
 
@@ -273,23 +280,77 @@ function populateMachDropdowns(data) {
     window.freightTypeOptions = data.FrieghtOpt.map(option => `<option value="${option.name}">${option.name}</option>`).join('');
     addFreightRow('dl-freight');
     addFreightRow('cipp-freight');
+    window.transPOptions = data.CommPub.map(transportP => `<option value="${transportP.name}" data-co2="${transportP.co2}">${transportP.name}</option>`).join('');
+    addTransportPRow('dl-transportpub');
+    addTransportPRow('cipp-transportpub');
+    window.transAOptions = data.CommAir.map(transportA => `<option value="${transportA.name}" data-co2="${transportA.co2}">${transportA.name}</option>`).join('');
+    addTransportARow('dl-transportair');
+    addTransportARow('cipp-transportair');
+    window.transDOptions = data.CommDom.map(transportD => `<option value="${transportD.name}" data-co2="${transportD.co2}">${transportD.name}</option>`).join('');
+    addTransportDRow('dl-transportdom');
+    addTransportDRow('cipp-transportdom');
+
 }
-function addFreightRow(sectionId) {
+
+function addTransportPRow(sectionId) {
     const form = document.getElementById(sectionId);
     const div = document.createElement('div');
-    div.className = 'freight-entry';
+    div.className = 'transpub-entry';
     div.innerHTML = `
         <div style="display: flex; gap: 10px;">
-            <label>Freight:</label>
-            <select name="freight" onchange="updateEmission(this)">${window.freightOptions}</select>
-            <label>Weight (Tonnes):</label>
-            <input type="number" name="weight" min="1" value="1" onchange="updateEmission(this)">
+            <label>Transport:</label>
+            <select name="transport" onchange="updateConsumption(this)">${window.transPOptions}</select>
+            
         </div>
         <div style="display: flex; gap: 10px; margin-top: 5px;">
-            <label>Freight Type:</label>
-            <select name="freightType">${window.freightTypeOptions}</select>
-            <label>Distance (km):</label>
-            <input type="number" name="distance" min="1" value="1" onchange="updateEmission(this)">
+            <label>Distance:</label>
+            <input type="number" name="distance" min="1" value="1" onchange="updateConsumption(this)">
+            <label>Headcount:</label>
+            <input type="number" name="quantity" min="1" value="1" onchange="updateConsumption(this)">
+        </div>
+        <button class="remove" type="button" onclick="this.parentElement.remove()">Remove</button>
+        <hr>
+        <br>
+    `;
+    form.appendChild(div);
+}
+function addTransportARow(sectionId) {
+    const form = document.getElementById(sectionId);
+    const div = document.createElement('div');
+    div.className = 'transair-entry';
+    div.innerHTML = `
+        <div style="display: flex; gap: 10px;">
+            <label>Transport:</label>
+            <select name="transport" onchange="updateConsumption(this)">${window.transAOptions}</select>
+            
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 5px;">
+            <label>Distance:</label>
+            <input type="number" name="distance" min="1" value="1" onchange="updateConsumption(this)">
+            <label>Headcount:</label>
+            <input type="number" name="quantity" min="1" value="1" onchange="updateConsumption(this)">
+        </div>
+        <button class="remove" type="button" onclick="this.parentElement.remove()">Remove</button>
+        <hr>
+        <br>
+    `;
+    form.appendChild(div);
+}
+function addTransportDRow(sectionId) {
+    const form = document.getElementById(sectionId);
+    const div = document.createElement('div');
+    div.className = 'transdom-entry';
+    div.innerHTML = `
+        <div style="display: flex; gap: 10px;">
+            <label>Transport:</label>
+            <select name="transport" onchange="updateConsumption(this)">${window.transDOptions}</select>
+            
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 5px;">
+            <label>Distance:</label>
+            <input type="number" name="distance" min="1" value="1" onchange="updateConsumption(this)">
+            <label>Headcount:</label>
+            <input type="number" name="quantity" min="1" value="1" onchange="updateConsumption(this)">
         </div>
         <button class="remove" type="button" onclick="this.parentElement.remove()">Remove</button>
         <hr>
@@ -298,44 +359,78 @@ function addFreightRow(sectionId) {
     form.appendChild(div);
 }
 
-function calculateTotalFrieghtEmission() {
-    let dlTotal = 0;
-    let cippTotal = 0;
+function calculateTotalTranspubEmission() {
     
-    document.querySelectorAll('#dl-freight .freight-entry').forEach(entry => {
-        const weight = entry.querySelector('[name="weight"]').value;
-        const distance = entry.querySelector('[name="distance"]').value;
-        const freight = entry.querySelector('[name="freight"]');
-        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        dlTotal += co2 * weight * distance;
-        frDL = dlTotal;
-    });
-    document.querySelectorAll('#cipp-freight .freight-entry').forEach(entry => {
-        const weight = entry.querySelector('[name="weight"]').value;
-        const distance = entry.querySelector('[name="distance"]').value;
-        const freight = entry.querySelector('[name="freight"]');
-        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        cippTotal += co2 * weight * distance;
-        frCIPP = cippTotal
-    });
-    showChart("FreightchartSection", "freightcomparisonChart", dlTotal, cippTotal)
-    document.getElementById('resultF-DL').innerText = `Total Emission for D&L: ${dlTotal.toFixed(2)} kg CO2`;
-    document.getElementById('resultF-CIPP').innerText = `Total Emission for CIPP: ${cippTotal.toFixed(2)} kg CO2`;
-    console.log(`Total Emission for UP CIPP: ${cippTotal.toFixed(2)} kg CO2`)
-    console.log(`Total Emission for DL: ${dlTotal.toFixed(2)} kg CO2`)
-}
 
-// function updateFreightEmission() {
-//     document.querySelectorAll('.freight-entry').forEach(entry => {
-//         const freight = entry.querySelector('[name="freight"]');
-//         const weight = entry.querySelector('[name="weight"]').value;
-//         const distance = entry.querySelector('[name="distance"]').value;
-//         const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
-        
-//         const emission = co2 * weight * distance;
-//         entry.querySelector('.section-emission').innerText = `Estimated Emission: ${emission.toFixed(2)} kg CO2`;
-//     });
-// }
+    let dltransPTotal = 0;
+    let cipptransPTotal = 0;
+    let dltransATotal = 0;
+    let cipptransATotal = 0;
+    let dltransDTotal = 0;
+    let cipptransDTotal = 0;
+
+    transCIPP = 0;
+    transDL = 0;
+    
+    document.querySelectorAll('#dl-transportpub .transpub-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        dltransPTotal +=  co2 * quantity * distance;
+        console.log(dltransPTotal);
+    });
+    document.querySelectorAll('#cipp-transportpub .transpub-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        cipptransPTotal +=  co2 * quantity * distance;
+        console.log("CIPP")
+        console.log(cipptransPTotal);
+    });
+    document.querySelectorAll('#dl-transportair .transair-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        dltransATotal +=  co2 * quantity * distance;
+        console.log(dltransATotal);
+    });
+    document.querySelectorAll('#cipp-transportair .transair-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        cipptransATotal +=  co2 * quantity * distance;
+        console.log(cipptransATotal)
+    });
+    document.querySelectorAll('#dl-transportdom .transdom-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        dltransDTotal +=  co2 * quantity * distance;
+        console.log(dltransDTotal);
+    });
+    document.querySelectorAll('#cipp-transportdom .transdom-entry').forEach(entry => {
+        const Transport = entry.querySelector('[name="transport"]');
+        const quantity = entry.querySelector('[name="quantity"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const co2 = parseFloat(Transport.selectedOptions[0].dataset.co2 || 0);
+        cipptransDTotal +=  co2 * quantity * distance;
+        console.log(cipptransDTotal);
+    });
+    transCIPP = cipptransPTotal + cipptransATotal + cipptransDTotal;
+    transDL = dltransPTotal + dltransATotal + dltransDTotal;
+    showChart("TransportchartSection", "transportcomparisonChart", transDL, transCIPP)
+
+    document.getElementById('resultTrans-DL').innerText = `Total Emission for D&L: ${transDL.toFixed(2)} kg CO2`;
+    document.getElementById('resultTrans-CIPP').innerText = `Total Emission for CIPP: ${transCIPP.toFixed(2)} kg CO2`;
+
+    console.log(`Total Emission for UP CIPP: ${transCIPP.toFixed(2)} kg CO2`)
+    console.log(`Total Emission for DL: ${transDL.toFixed(2)} kg CO2`)
+}
 
 function addMachineRow(sectionId) {
     const form = document.getElementById(sectionId);
@@ -395,6 +490,72 @@ function calculateTotalMachineryEmission() {
     console.log(`Total Emission for DL: ${cippMachTotal.toFixed(2)} kg CO2`)
 }
 
+
+function addFreightRow(sectionId) {
+    const form = document.getElementById(sectionId);
+    const div = document.createElement('div');
+    div.className = 'freight-entry';
+    div.innerHTML = `
+        <div style="display: flex; gap: 10px;">
+            <label>Freight:</label>
+            <select name="freight" onchange="updateEmission(this)">${window.freightOptions}</select>
+            <label>Weight (Tonnes):</label>
+            <input type="number" name="weight" min="1" value="1" onchange="updateEmission(this)">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 5px;">
+            <label>Freight Type:</label>
+            <select name="freightType">${window.freightTypeOptions}</select>
+            <label>Distance (km):</label>
+            <input type="number" name="distance" min="1" value="1" onchange="updateEmission(this)">
+        </div>
+        <button class="remove" type="button" onclick="this.parentElement.remove()">Remove</button>
+        <hr>
+        <br>
+    `;
+    form.appendChild(div);
+}
+
+function calculateTotalFrieghtEmission() {
+    let dlTotal = 0;
+    let cippTotal = 0;
+    
+    document.querySelectorAll('#dl-freight .freight-entry').forEach(entry => {
+        const weight = entry.querySelector('[name="weight"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const freight = entry.querySelector('[name="freight"]');
+        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
+        dlTotal += co2 * weight * distance;
+        console.log(freight);
+        console.log(co2);
+        frDL = dlTotal;
+    });
+    document.querySelectorAll('#cipp-freight .freight-entry').forEach(entry => {
+        const weight = entry.querySelector('[name="weight"]').value;
+        const distance = entry.querySelector('[name="distance"]').value;
+        const freight = entry.querySelector('[name="freight"]');
+        const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
+        cippTotal += co2 * weight * distance;
+        frCIPP = cippTotal
+    });
+    showChart("FreightchartSection", "freightcomparisonChart", dlTotal, cippTotal)
+    document.getElementById('resultF-DL').innerText = `Total Emission for D&L: ${dlTotal.toFixed(2)} kg CO2`;
+    document.getElementById('resultF-CIPP').innerText = `Total Emission for CIPP: ${cippTotal.toFixed(2)} kg CO2`;
+    console.log(`Total Emission for UP CIPP: ${cippTotal.toFixed(2)} kg CO2`)
+    console.log(`Total Emission for DL: ${dlTotal.toFixed(2)} kg CO2`)
+}
+
+// function updateFreightEmission() {
+//     document.querySelectorAll('.freight-entry').forEach(entry => {
+//         const freight = entry.querySelector('[name="freight"]');
+//         const weight = entry.querySelector('[name="weight"]').value;
+//         const distance = entry.querySelector('[name="distance"]').value;
+//         const co2 = parseFloat(freight.selectedOptions[0].dataset.co2 || 0);
+        
+//         const emission = co2 * weight * distance;
+//         entry.querySelector('.section-emission').innerText = `Estimated Emission: ${emission.toFixed(2)} kg CO2`;
+//     });
+// }
+
 function clicktest() {
     console.log("Button clicked");
 }
@@ -435,6 +596,11 @@ function showChart(divC, chartName, cipp, dl) {
     if (divC == "MachinerychartSection") {
         if (chartInstanceMachinary) {
             chartInstanceMachinary.destroy();
+        }
+    }
+    if (divC == "TransportchartSection") {
+        if (chartInstanceTransport) {
+            chartInstanceTransport.destroy();
         }
     }
     const ctx = document.getElementById(chartName).getContext('2d');
@@ -522,6 +688,9 @@ function showChart(divC, chartName, cipp, dl) {
     }
     if (divC == "MachinerychartSection") {
         chartInstanceMachinary = new Chart(ctx, config);
+    }
+    if (divC == "TransportchartSection") {
+        chartInstanceTransport = new Chart(ctx, config);
     }
   }
 
