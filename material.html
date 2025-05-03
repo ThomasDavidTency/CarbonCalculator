@@ -187,6 +187,123 @@
             justify-content: center;
             gap: 20px;
         }
+        .cost-container {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      position: relative; 
+      align-items: center;
+    }
+
+    .costupdate-button {
+      /* top: 20px; */
+      /* left: 200px; */
+      /* padding: 6px 12px; */
+      font-size: 14px;
+      background-color: #61ba66;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 300px;
+      
+    }
+
+    .costupdate-button:hover {
+      background-color: #142e15;
+    }
+
+    .top-section {
+      display: flex;
+      margin-top: 40px;
+      display: none; /* Hidden initially */
+    margin-top: 40px;
+    }
+
+    .cost-left {
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .cost-label {
+      /* margin-bottom: 10px; */
+      padding: 10px;
+    }
+
+    .cost-value {
+      font-size: 80px;
+      font-weight: bold;
+      padding: 10px;
+      color: #218838;
+    }
+
+    .cost-right {
+      width: 70%;
+      padding-left: 20px;
+    }
+
+    .cost-actual-label {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .cost-actual-value {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .cost-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cost-bar {
+      background-color: #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      height: 30px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .cost-bar:hover {
+      opacity: 0.8;
+    }
+
+    .cost-fill {
+      height: 100%;
+      padding-left: 10px;
+      display: flex;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      width: 300px;
+    }
+
+    .bar-label {
+      position: absolute;
+      right: 10px;
+      top: 4px;
+      color: white;
+      font-size: 14px;
+    }
+    .cost-actual-container {
+        display: flex;
+        gap: 40px;
+        margin-bottom: 20px;
+    }
+
+    .actual-cost-box {
+        flex: 1;
+    }
+
     </style>
 </head>
 <body onload="fetchData()">
@@ -415,6 +532,7 @@
                 <div id="resultDom-CIPP" class = "result"></div>
             </div>
         </div>
+        <br><br><br>
         <div class="TransportDom-form" >
             <div id="resultTrans-DL" style="width: 100%;" class = "result"></div>
             <div id="resultTrans-CIPP" style="width: 100%;" class = "result"></div>
@@ -433,7 +551,30 @@
 
     <div class="Freights-Comparision" id="CarbonCost">
         <h1 class="barring">Carbon Cost</h1>
-        <p style="text-align: center;"> In development. Coming soon.</p>
+        <div class="cost-container">
+            <button class="costupdate-button" onclick="fetchRate()">Estimate Carbon Cost</button>
+            <div class="top-section">
+              <div class="cost-left">
+                <div class="cost-label">Live Carbon Rate<br>(NZD)</div>
+                <div class="cost-value" id="todaysRate">--</div>
+              </div>
+              <div class="cost-right">
+                <div class="cost-actual-container">
+                    <div class="actual-cost-box">
+                      <div class="cost-actual-label">Total Carbon Cost DL</div>
+                      <div class="cost-actual-value" id="actualCostDL">$--</div>
+                    </div>
+                    <div class="actual-cost-box">
+                      <div class="cost-actual-label">Total Carbon Cost CIPP</div>
+                      <div class="cost-actual-value" id="actualCostCIPP">$--</div>
+                    </div>
+                  </div>             
+                <div class="cost-chart" id="costChart">
+                  <!-- Chart goes here -->
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
     <br>
     <div class="Freights-Comparision" id="Traffic">

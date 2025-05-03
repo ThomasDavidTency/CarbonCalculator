@@ -106,7 +106,7 @@ let frCIPP = 0;
 let matCIPP = 0;
 let transCIPP = 0;
 let transDL = 0;
-
+let rate=100;
 
 
 
@@ -694,65 +694,7 @@ function showChart(divC, chartName, cipp, dl) {
     }
   }
 
-  function drawDonutChart(chartId, title, data) {
-    const ctx = document.getElementById(chartId).getContext('2d');
-
-    const config = {
-      type: 'doughnut', // Donut chart type
-      data: {
-        labels: ['Machinery', 'Freight', 'Material'], // Categories
-        datasets: [{
-          data: data, // Dynamic data
-          backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56'], // Colors
-          hoverBackgroundColor: ['#ff5a7d', '#48a9e6', '#f9c100'], // Hover colors
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              font: {
-                size: 14
-              }
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return context.label + ': ' + context.raw + ' kg CO₂'; // Custom tooltip
-              }
-            }
-          },
-          title: {
-            display: true,
-            text: title,
-            font: {
-              size: 18
-            }
-          }
-        },
-        cutout: '70%', // Hole size for donut chart
-        hover: {
-          mode: 'nearest',
-          intersect: false,
-          animationDuration: 400, // Hover animation duration
-        },
-        elements: {
-          arc: {
-            hoverOffset: 10, // Increase space between segments on hover
-            hoverBorderWidth: 10, // Optional: border width on hover
-            borderColor: 'white', // Optional: border color on hover
-          }
-        }
-      }
-    };
-
-    // Create the chart
-    new Chart(ctx, config);
-  }
-
+  
   // Function to show the charts
   function showAnalysisCharts() {
     const chartDiv = document.getElementById('chartSection');
@@ -766,3 +708,73 @@ function showChart(divC, chartName, cipp, dl) {
     const dlData = [machDL, frDL, machDL]; // Transport, Freight, Material for D&L
     drawDonutChart('dlDonutChart', 'D&L CO₂ Emissions Distribution', dlData);
   }
+
+  const apicost = "https://script.google.com/macros/s/AKfycbxIToRHfu6hCwLSY_wJveor9PZxO4pwVYjkixSIklSJa978mdRb9Q4pt_1P9GWmS2KM/exec";
+
+  async function fetchRate() {
+    try {
+      const response = await fetch(apicost);
+      const text = await response.text();
+      const rateStr = text.split("#")[1];
+      rate = parseFloat(rateStr);
+      let dltot = (matDL+machDL+frDL+transDL);
+      let cipptot = (matCIPP+machCIPP+frCIPP+transCIPP);
+  
+      document.getElementById("todaysRate").textContent = "$"+ rate.toFixed(2);
+      document.getElementById("actualCostDL").textContent = "$" + (rate * dltot).toFixed(2);
+      document.getElementById("actualCostCIPP").textContent = "$" + (rate * cipptot).toFixed(2);
+      generateChart();
+  
+      // Show the content section
+      document.querySelector(".top-section").style.display = "flex";
+    } catch (err) {
+      console.error("API fetch failed:", err);
+      alert("Failed to fetch data.");
+    }
+  }
+  
+
+  function generateChart() {
+    const labels = [
+      "Material DL", "Material CIPP",
+      "Machinery DL", "Machinery CIPP",
+      "Freight DL", "Freight CIPP",
+      "Transport DL", "Transport CIPP"
+    ];
+    console.log(rate)
+  
+    const rawValues = [matDL, matCIPP, machDL, machCIPP, frDL, frCIPP, transDL, transCIPP];
+    const scaledValues = rawValues.map(v => v * rate);
+    const maxVal = Math.max(...scaledValues);
+  
+    const chart = document.getElementById("costChart");
+    chart.innerHTML = "";
+  
+    labels.forEach((label, i) => {
+      const value = scaledValues[i];
+  
+      const bar = document.createElement("div");
+      bar.className = "cost-bar";
+  
+      const fill = document.createElement("div");
+      fill.className = "cost-fill";
+      fill.style.width = `${(value / maxVal) * 100}%`;
+      fill.style.backgroundColor = getColor(i);
+      fill.textContent = label;
+  
+      const tag = document.createElement("div");
+      tag.className = "bar-label";
+      tag.textContent = `$${value.toFixed(2)} NZD`;
+      fill.appendChild(tag);
+  
+      bar.appendChild(fill);
+      chart.appendChild(bar);
+    });
+  }
+  
+
+
+function getColor(index) {
+  const colors = ["#4caf50", "#2196f3", "#ff9800", "#f44336"];
+  return colors[index % colors.length];
+}
