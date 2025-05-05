@@ -744,7 +744,7 @@ function showChart(divC, chartName, cipp, dl) {
     console.log(rate)
   
     const rawValues = [matDL, matCIPP, machDL, machCIPP, frDL, frCIPP, transDL, transCIPP];
-    const scaledValues = rawValues.map(v => v * rate);
+    const scaledValues = rawValues.map(v => v * (rate/1000));
     const maxVal = Math.max(...scaledValues);
   
     const chart = document.getElementById("costChart");
@@ -778,3 +778,92 @@ function getColor(index) {
   const colors = ["#4caf50", "#2196f3", "#ff9800", "#f44336"];
   return colors[index % colors.length];
 }
+
+let donutChart1, donutChart2, barChart;
+
+    const createDonutChart = (ctx, data, labels, title) => {
+      return new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: title,
+            data: data,
+            backgroundColor: ['#4bc0c0', '#36a2eb', '#ffcd56', '#ff6384'],
+            hoverOffset: 20
+          }]
+        },
+        options: {
+          cutout: '40%',
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: title
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    };
+
+    const createBarChart = (ctx, data, labels, title) => {
+      return new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: title,
+            data: data,
+            backgroundColor: ['#36a2eb', '#ffcd56', '#ff6384']
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: title
+            },
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    };
+
+    const renderCharts = () => {
+      // Show dashboard on button click
+      document.getElementById('dashboard').style.display = 'flex';
+
+      // Destroy previous instances
+      if (donutChart1) donutChart1.destroy();
+      if (donutChart2) donutChart2.destroy();
+      if (barChart) barChart.destroy();
+
+      // Create new charts
+      donutChart1 = createDonutChart(
+        document.getElementById('metricDonut1'),
+        [matDL, machDL, frDL, transDL],
+        ['Material', 'Machinery', 'Freights', 'Transportation'],
+        'DL Distribution'
+      );
+
+      donutChart2 = createDonutChart(
+        document.getElementById('metricDonut2'),
+        [matCIPP, machCIPP, frCIPP, transCIPP],
+        ['Material', 'Machinery', 'Freights', 'Transportation'],
+        'CIPP Distribution'
+      );
+
+      barChart = createBarChart(
+        document.getElementById('horizontalBarComparison'),
+        [(matDL+machDL+frDL+transDL),(matCIPP+machCIPP+frCIPP+transCIPP)],
+        ['Total CO2 DL', 'Total CO2 CIPP'],
+        'Total CO2 Comparison'
+      );
+    };

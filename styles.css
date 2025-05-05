@@ -9,8 +9,8 @@ body {
 
 .home {
     position: relative;
-    width: 100%;  /* Ensure the container fills the width */
-    height: 80vh;  /* Set a specific height or adjust as needed */
+    width: 100vw;  /* Ensure the container fills the width */
+    height: 95vh;  /* Set a specific height or adjust as needed */
     display: flex;
     flex-direction: column;
     justify-content: center;  /* Vertically center the content */
@@ -45,12 +45,13 @@ body {
     color: white;
     padding: 10px;
     border-radius: 8px; /* Optional: Rounded corners */
-    width: 100%; /* Adjust to content width */
+    width: 90%; /* Adjust to content width */
     margin: auto;  /* Center it on the page */
     text-align: center;
   }
+
   .subbarring {
-    background-color: #495d74; /* Replace with any color you like */
+    background-color: #59bc91; /* Replace with any color you like */
     color: white;
     padding: 10px;
     border-radius: 8px; /* Optional: Rounded corners */
@@ -184,11 +185,11 @@ button:hover {
 }
 
 .nav-links li a:hover {
-    color: #ffcc00; /* Change color when hovering */
+    color: #3ebad9; /* Change color when hovering */
 }
 
 .nav-links li a:focus {
-    color: #ffcc00; /* Change color when focused */
+    color: #52fff1; /* Change color when focused */
 }
 
 /* Push down rest of the content to avoid overlap */

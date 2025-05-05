@@ -188,20 +188,21 @@
             gap: 20px;
         }
         .cost-container {
-      background-color: #ffffff;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      position: relative; 
-      align-items: center;
-    }
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            align-items: center;
+            width: 1000px;
+        }
 
     .costupdate-button {
-      /* top: 20px; */
-      /* left: 200px; */
+      top: 500px;
+      left: 200px;
       /* padding: 6px 12px; */
       font-size: 14px;
-      background-color: #61ba66;
+      background-color: #4caf50;
       color: white;
       border: none;
       border-radius: 4px;
@@ -211,7 +212,7 @@
     }
 
     .costupdate-button:hover {
-      background-color: #142e15;
+      background-color: #45a049;
     }
 
     .top-section {
@@ -230,7 +231,7 @@
     }
 
     .cost-label {
-      /* margin-bottom: 10px; */
+      margin-bottom: 10px;
       padding: 10px;
     }
 
@@ -303,6 +304,30 @@
     .actual-cost-box {
         flex: 1;
     }
+
+    .analysis-dashboard {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: nowrap; /* No wrapping */
+      gap: 30px;
+      max-width: 1400px;
+      margin: auto;
+      overflow-x: auto; /* In case of narrow screens */
+    }
+
+  .metric-chart {
+    width: 300px;
+    height: 300px;
+    flex-shrink: 0;
+  }
+
+  .comparison-chart {
+    width: 600px;
+    height: 300px;
+    flex-shrink: 0; 
+  }
+
 
     </style>
 </head>
@@ -467,20 +492,10 @@
     </div>
     <br><br><br>
     
-  
-    
-    <!-- <div class="chart-container" id="chartSection">
-        <div>
-          <canvas id="cippDonutChart"></canvas>
-        </div>
-        <div>
-          <canvas id="dlDonutChart"></canvas>
-        </div>
-    </div> -->
     <br><br><br><br>
     <h1 class="barring">Transportation Comparison</h1>
     <br>
-    <div class="Transport-Comparision" id="transport">
+    <div class="Freights-Comparision" id="transport">
         <p style="text-align: center;">Input the possible freight required in both methods to estimate the carbon emission.</p>
         <h2 class="subbarring">Public Travel</h2>
         <br>
@@ -532,53 +547,65 @@
                 <div id="resultDom-CIPP" class = "result"></div>
             </div>
         </div>
-        <br><br><br>
-        <div class="TransportDom-form" >
-            <div id="resultTrans-DL" style="width: 100%;" class = "result"></div>
-            <div id="resultTrans-CIPP" style="width: 100%;" class = "result"></div>
+        <br>
+        <div class="TransportDom-form">
+            <div id="resultTrans-DL" style="width: 40%;" class = "result"></div>
+            <div id="resultTrans-CIPP" style="width: 40%;" class = "result"></div>
         </div>
-        <button type="button" onclick="calculateTotalTranspubEmission()" style="display: block; margin: 20px auto;">Calculate New Emission</button>
+        <button type="button" onclick="calculateTotalTranspubEmission()" style="display:block; margin:20px auto;">Calculate New Emission</button>
         <div id="TransportchartSection" class="chart-container">
             <canvas id="transportcomparisonChart" width="900" height="250"></canvas>
         </div>
-    <br><br><br><br><br>
-
-    <div id="chartSection">
-        <h1 class="barring">Graphical Insights</h1>
-        <p style="text-align: center;">In development. Coming soon.</p>
-        <!-- <button type="button" style="width: 300px;" onclick="showAnalysisCharts()">Show Analysis Charts</button> -->
+        <br><br><br><br><br>
     </div>
 
-    <div class="Freights-Comparision" id="CarbonCost">
-        <h1 class="barring">Carbon Cost</h1>
-        <div class="cost-container">
-            <button class="costupdate-button" onclick="fetchRate()">Estimate Carbon Cost</button>
-            <div class="top-section">
-              <div class="cost-left">
-                <div class="cost-label">Live Carbon Rate<br>(NZD)</div>
-                <div class="cost-value" id="todaysRate">--</div>
-              </div>
-              <div class="cost-right">
-                <div class="cost-actual-container">
-                    <div class="actual-cost-box">
-                      <div class="cost-actual-label">Total Carbon Cost DL</div>
-                      <div class="cost-actual-value" id="actualCostDL">$--</div>
-                    </div>
-                    <div class="actual-cost-box">
-                      <div class="cost-actual-label">Total Carbon Cost CIPP</div>
-                      <div class="cost-actual-value" id="actualCostCIPP">$--</div>
-                    </div>
-                  </div>             
-                <div class="cost-chart" id="costChart">
-                  <!-- Chart goes here -->
-                </div>
-              </div>
+    <h1 class="barring">Graphical Insights</h1>
+    <div class="Freights-Comparision" id="chartSection">
+        <button class="button" onclick="renderCharts()">Refresh Charts</button>
+        <div class="analysis-dashboard" id="dashboard">
+            <div class="metric-chart">
+                <canvas id="metricDonut1"></canvas>
             </div>
-          </div>
+            <div class="metric-chart">
+                <canvas id="metricDonut2"></canvas>
+            </div>
+            <div class="comparison-chart">
+                <canvas id="horizontalBarComparison"></canvas>
+            </div>
+        </div>
     </div>
     <br>
+    
+
+    <h1 class="barring">Carbon Cost</h1>
+    <div class="Freights-Comparision" id="CarbonCost">
+        <button class="button" onclick="fetchRate()">Estimate Carbon Cost</button>
+        <div class="cost-container">
+            
+            <div class="top-section">
+                <div class="cost-left">
+                    <div class="cost-label">Live Carbon Rate<br>(NZD)</div>
+                    <div class="cost-value" id="todaysRate">--</div>
+                </div>
+                <div class="cost-right">
+                    <div class="cost-actual-container">
+                        <div class="actual-cost-box">
+                            <div class="cost-actual-label">Total Carbon Cost DL</div>
+                            <div class="cost-actual-value" id="actualCostDL">$--</div>
+                        </div>
+                        <div class="actual-cost-box">
+                            <div class="cost-actual-label">Total Carbon Cost CIPP</div>
+                            <div class="cost-actual-value" id="actualCostCIPP">$--</div>
+                        </div>
+                    </div>             
+                    <div class="cost-chart" id="costChart"></div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <br><br><br>
+    <h1 class="barring">Traffic Comparison</h1>
     <div class="Freights-Comparision" id="Traffic">
-        <h1 class="barring">Traffic Comparison</h1>
         <p style="text-align: center;"> In development. Coming soon.</p>
     </div>
     
@@ -661,7 +688,7 @@
         document.addEventListener('mousemove', function(e) {
             const x = e.clientX / window.innerWidth;
             const y = e.clientY / window.innerHeight;
-            document.body.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #ffffff, #b5e6f4)`;
+            document.body.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, #ffffff, #e4e9f2)`;
         });
         
     </script>
